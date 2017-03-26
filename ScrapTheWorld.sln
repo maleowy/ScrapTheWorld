@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker.CefSharp.WinForms", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker.CefSharp.WPF", "Worker.CefSharp.WPF\Worker.CefSharp.WPF.csproj", "{BE4C3AD0-8DA2-4246-8C63-EEEB7DC197BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Selenium", "Tests.Selenium\Tests.Selenium.csproj", "{377EDBD5-798D-4F91-A615-7DD23522F1F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,18 @@ Global
 		{BE4C3AD0-8DA2-4246-8C63-EEEB7DC197BE}.Release|x64.Build.0 = Release|x64
 		{BE4C3AD0-8DA2-4246-8C63-EEEB7DC197BE}.Release|x86.ActiveCfg = Release|x86
 		{BE4C3AD0-8DA2-4246-8C63-EEEB7DC197BE}.Release|x86.Build.0 = Release|x86
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Debug|x64.Build.0 = Debug|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Debug|x86.Build.0 = Debug|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Release|x64.ActiveCfg = Release|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Release|x64.Build.0 = Release|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Release|x86.ActiveCfg = Release|Any CPU
+		{377EDBD5-798D-4F91-A615-7DD23522F1F9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
