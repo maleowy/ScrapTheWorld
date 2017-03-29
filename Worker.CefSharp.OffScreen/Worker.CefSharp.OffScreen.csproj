@@ -85,6 +85,14 @@
       <Project>{a55848cc-10e7-40cb-addb-04740b16dd43}</Project>
       <Name>CefSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Extensions\Extensions.csproj">
+      <Project>{f229c47d-c860-48bc-a02d-efb79b9795dd}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logic\Logic.csproj">
+      <Project>{adcf7bdc-f837-49a1-8c00-1b3dcc69c0aa}</Project>
+      <Name>Logic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{b36d0d68-41c2-46f3-8d4a-f9326ba62256}</Project>
       <Name>Models</Name>

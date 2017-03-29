@@ -1,11 +1,12 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using CefSharp;
 using CefSharp.Wpf;
+using Extensions;
+using Logic;
 
 namespace Worker.CefSharp.WPF
 {
@@ -19,7 +20,15 @@ namespace Worker.CefSharp.WPF
 
             InitializeComponent();
 
+            var settings = new CefSettings();
+            settings.IgnoreCertificateErrors = true;
+            Cef.Initialize(settings, true, null);
+
             Browser = new ChromiumWebBrowser();
+
+            var boundObj = new BoundObject();
+            Browser.RegisterJsObject("bound", boundObj);
+
             DockPanel.Children.Add(Browser);
 
             UpdateBindings();
@@ -53,26 +62,12 @@ namespace Worker.CefSharp.WPF
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Browser.Load("https://duckduckgo.com");
-            await Task.Delay(3000);
-            await Browser.EvaluateScriptAsync("document.querySelector('#search_form_input_homepage').value = 'Test';");
-            await Task.Delay(1000);
-            await Browser.EvaluateScriptAsync("document.querySelector('#search_button_homepage').click();");
-            await Task.Delay(1000);
-            await Browser.EvaluateScriptAsync("console.log(document.title)");
+            await TestLogic.Run(Browser);
         }
 
         public void ShowDevTools(object sender, RoutedEventArgs e)
         {
             Browser.ShowDevTools();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            Cef.Shutdown();
-            Application.Current.Shutdown();
         }
     }
 }

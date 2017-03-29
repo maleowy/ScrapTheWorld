@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
+using Extensions;
+using Logic;
 
 namespace Worker.CefSharp.WinForms
 {
@@ -17,9 +19,9 @@ namespace Worker.CefSharp.WinForms
 
         public MainForm()
         {
-            Text = "Worker CefSharp WinForms";
+            InitializeComponent();
 
-            InitializeComponent();  
+            Text = "Worker CefSharp WinForms";
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             var version = $"Chromium: {Cef.ChromiumVersion}, CEF: {Cef.CefVersion}, CefSharp: {Cef.CefSharpVersion}, Environment: {bitness}";
@@ -37,14 +39,7 @@ namespace Worker.CefSharp.WinForms
 
         private async void MainForm_Loaded(object sender, EventArgs e)
         {
-            await Task.Delay(3000);
-            Browser.Load("https://duckduckgo.com");
-            await Task.Delay(3000);
-            await Browser.EvaluateScriptAsync("document.querySelector('#search_form_input_homepage').value = 'Test';");
-            await Task.Delay(1000);
-            await Browser.EvaluateScriptAsync("document.querySelector('#search_button_homepage').click();");
-            await Task.Delay(1000);
-            await Browser.EvaluateScriptAsync("console.log(document.title)");
+            await TestLogic.Run(Browser);
         }
 
         public void InitializeChromium()
@@ -61,6 +56,9 @@ namespace Worker.CefSharp.WinForms
             {
                 Dock = DockStyle.Fill
             };
+
+            var boundObj = new BoundObject();
+            Browser.RegisterJsObject("bound", boundObj);
 
             toolStripContainer.ContentPanel.Controls.Add(Browser);
 

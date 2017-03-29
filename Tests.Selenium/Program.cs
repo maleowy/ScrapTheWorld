@@ -18,10 +18,16 @@ namespace Tests.Selenium
             IWebElement button = driver.FindElement(By.Id("search_button_homepage"));
             button.Click();
 
-            System.Console.WriteLine("Page title is: " + driver.Title);
-            driver.Quit();
+            Console.WriteLine("Page title is: " + driver.Title);
+
+            IJavaScriptExecutor jse = (IJavaScriptExecutor)driver;
+            string title = (string)jse.ExecuteScript("return document.title");
+
+            Console.WriteLine("Page title second time is: " + title);
 
             Console.ReadLine();
+
+            driver.Quit();
         }
     }
 }

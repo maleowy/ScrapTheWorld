@@ -7,13 +7,22 @@ namespace Worker.CefSharp.WPF
     {
         public App()
         {
-            ShutdownMode = ShutdownMode.OnExplicitShutdown;
-
-            var settings = new CefSettings();
-            Cef.Initialize(settings, true, null);
-
             MainWindow window = new MainWindow();
             window.Show();
+        }
+
+        //protected override void OnStartup(StartupEventArgs e)
+        //{
+        //    base.OnStartup(e);
+
+        //    var settings = new CefSettings();
+        //    Cef.Initialize(settings, true, null);
+        //}
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Cef.Shutdown();
+            base.OnExit(e);
         }
     }
 }

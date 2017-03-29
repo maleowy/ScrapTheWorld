@@ -5,6 +5,8 @@ using System;
 using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.OffScreen;
+using Extensions;
+using Logic;
 
 namespace Worker.CefSharp.OffScreen
 {
@@ -17,6 +19,7 @@ namespace Worker.CefSharp.OffScreen
             Console.Title = "Worker CefSharp OffScreen";
 
             var settings = new CefSettings();
+            settings.IgnoreCertificateErrors = true;
 
             //Perform dependency check to make sure all relevant resources are in our output directory.
             Cef.Initialize(settings, true, null);
@@ -24,30 +27,21 @@ namespace Worker.CefSharp.OffScreen
             // Create the offscreen Chromium Browser.
             Browser = new ChromiumWebBrowser("about:blank");
 
+            var boundObj = new BoundObject();
+            Browser.RegisterJsObject("bound", boundObj);
+
             Browser.ConsoleMessage += (sender, eventArgs) =>
             {
                 Console.WriteLine(eventArgs.Message);
             };
 
-            Run().Wait();
+            TestLogic.Run(Browser).Wait();
 
             Console.ReadLine();
 
             // Clean up Chromium objects.  You need to call this in your application otherwise
             // you will get a crash when closing.
             Cef.Shutdown();
-        }
-
-        public static async Task Run()
-        {
-            await Task.Delay(3000);
-            Browser.Load("https://duckduckgo.com");
-            await Task.Delay(3000);
-            await Browser.EvaluateScriptAsync("document.querySelector('#search_form_input_homepage').value = 'Test';");
-            await Task.Delay(1000);
-            await Browser.EvaluateScriptAsync("document.querySelector('#search_button_homepage').click();");
-            await Task.Delay(1000);
-            await Browser.EvaluateScriptAsync("console.log(document.title)");
         }
     }
 }
