@@ -27,7 +27,7 @@ namespace Logic
             await browser.LoadPageAsync();
             string title = await browser.EvaluateScriptWithReturnAsync("document.title");
             await browser.EvaluateScriptAsync("console.log(document.title)");
-            await browser.EvaluateScriptAsync("bound.test(document.title)");
+            await browser.EvaluateScriptAsync("bound.reverseText(document.title)");
         }
     }
 }
