@@ -1,16 +1,20 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using CefSharp;
 using CefSharp.Wpf;
+using EasyNetQ;
 using Extensions;
-using Logic;
+using Models;
+using static Logic.Logic;
 
 namespace Worker.CefSharp.WPF
 {
     public partial class MainWindow
     {
+        public static IBus Bus;
         public ChromiumWebBrowser Browser;
 
         public MainWindow()
@@ -19,6 +23,14 @@ namespace Worker.CefSharp.WPF
 
             InitializeComponent();
 
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+            InitializeChromium();
+
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void InitializeChromium()
+        {
             var settings = new CefSettings();
             settings.IgnoreCertificateErrors = true;
             Cef.Initialize(settings, true, null);
@@ -36,8 +48,6 @@ namespace Worker.CefSharp.WPF
             {
                 Debug.WriteLine(eventArgs.Message);
             };
-
-            Loaded += MainWindow_Loaded;
         }
 
         private void UpdateBindings()
@@ -61,7 +71,28 @@ namespace Worker.CefSharp.WPF
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await TestLogic.Run(Browser);
+            await Browser.WaitForInitializationAsync();
+
+            Bus.SubscribeAsync("subscriptionId", GetLogic(async url => await Browser.LoadPageAsync(url),
+                async script =>
+                {
+                    string result = null;
+                    await Dispatcher.Invoke(async () =>
+                    {
+                        result = await Browser.EvaluateScriptWithReturnAsync(script);
+                    });
+
+                    return await Task.FromResult(result);
+                }));
+
+            Publish();
+        }
+
+        private static void Publish()
+        {
+            Bus.Publish(new Node { Url = "http://www.wp.pl", Script = "document.title" });
+            Bus.Publish(new Node { Url = "http://www.onet.pl", Script = "document.title" });
+            Bus.Publish(new Node { Url = "http://www.interia.pl", Script = "document.title" });
         }
 
         public void ShowDevTools(object sender, RoutedEventArgs e)

@@ -4,19 +4,46 @@
 using System;
 using CefSharp;
 using CefSharp.OffScreen;
+using EasyNetQ;
 using Extensions;
-using Logic;
+using Models;
+using static Logic.Logic;
 
 namespace Worker.CefSharp.OffScreen
 {
     public class Program
     {
+        public static IBus Bus;
         public static ChromiumWebBrowser Browser;
 
         public static void Main(string[] args)
         {
             Console.Title = "Worker CefSharp OffScreen";
 
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+            InitializeChromium();
+
+            Bus.SubscribeAsync("subscriptionId", GetLogic(async url => await Browser.LoadPageAsync(url),
+                async script => await Browser.EvaluateScriptWithReturnAsync(script)));
+
+            Publish();
+
+            Console.ReadLine();
+
+            // Clean up Chromium objects.  You need to call this in your application otherwise
+            // you will get a crash when closing.
+            Cef.Shutdown();
+        }
+
+        private static void Publish()
+        {
+            Bus.Publish(new Node { Url = "http://www.wp.pl", Script = "document.title" });
+            Bus.Publish(new Node { Url = "http://www.onet.pl", Script = "document.title" });
+            Bus.Publish(new Node { Url = "http://www.interia.pl", Script = "document.title" });
+        }
+
+        private static void InitializeChromium()
+        {
             var settings = new CefSettings();
             settings.IgnoreCertificateErrors = true;
 
@@ -34,13 +61,7 @@ namespace Worker.CefSharp.OffScreen
                 Console.WriteLine(eventArgs.Message);
             };
 
-            TestLogic.Run(Browser).Wait();
-
-            Console.ReadLine();
-
-            // Clean up Chromium objects.  You need to call this in your application otherwise
-            // you will get a crash when closing.
-            Cef.Shutdown();
+            Browser.WaitForInitialization();
         }
     }
 }

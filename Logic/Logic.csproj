@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic.cs" />
     <Compile Include="TestLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -68,6 +69,10 @@
     <ProjectReference Include="..\Extensions\Extensions.csproj">
       <Project>{f229c47d-c860-48bc-a02d-efb79b9795dd}</Project>
       <Name>Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{27bcdd5e-92bc-43c4-848d-3bdcafae96f0}</Project>
+      <Name>Models</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

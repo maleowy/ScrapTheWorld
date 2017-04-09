@@ -7,13 +7,16 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
+using EasyNetQ;
 using Extensions;
-using Logic;
+using Models;
+using static Logic.Logic;
 
 namespace Worker.CefSharp.WinForms
 {
     public partial class MainForm : Form
     {
+        public static IBus Bus;
         public ChromiumWebBrowser Browser;
 
         public MainForm()
@@ -22,10 +25,7 @@ namespace Worker.CefSharp.WinForms
 
             Text = "Worker CefSharp WinForms";
 
-            var bitness = Environment.Is64BitProcess ? "x64" : "x86";
-            var version = $"Chromium: {Cef.ChromiumVersion}, CEF: {Cef.CefVersion}, CefSharp: {Cef.CefSharpVersion}, Environment: {bitness}";
-            DisplayOutput(version);
-
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
             InitializeChromium();
 
             Load += MainForm_Loaded;
@@ -38,11 +38,27 @@ namespace Worker.CefSharp.WinForms
 
         private async void MainForm_Loaded(object sender, EventArgs e)
         {
-            await TestLogic.Run(Browser);
+            await Browser.WaitForInitializationAsync();
+
+            Bus.SubscribeAsync("subscriptionId", GetLogic(async url => await Browser.LoadPageAsync(url),
+                async script => await Browser.EvaluateScriptWithReturnAsync(script)));
+
+            Publish();
+        }
+
+        private static void Publish()
+        {
+            Bus.Publish(new Node { Url = "http://www.wp.pl", Script = "document.title" });
+            Bus.Publish(new Node { Url = "http://www.onet.pl", Script = "document.title" });
+            Bus.Publish(new Node { Url = "http://www.interia.pl", Script = "document.title" });
         }
 
         public void InitializeChromium()
         {
+            var bitness = Environment.Is64BitProcess ? "x64" : "x86";
+            var version = $"Chromium: {Cef.ChromiumVersion}, CEF: {Cef.CefVersion}, CefSharp: {Cef.CefSharpVersion}, Environment: {bitness}";
+            DisplayOutput(version);
+
             Cef.EnableHighDPISupport();
 
             var settings = new CefSettings();

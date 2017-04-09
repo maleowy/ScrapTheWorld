@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj", "{ADCF7BDC-F837-49A1-8C00-1B3DCC69C0AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.EasyNetQ", "Tests.EasyNetQ\Tests.EasyNetQ.csproj", "{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,18 @@ Global
 		{ADCF7BDC-F837-49A1-8C00-1B3DCC69C0AA}.Release|x64.Build.0 = Release|Any CPU
 		{ADCF7BDC-F837-49A1-8C00-1B3DCC69C0AA}.Release|x86.ActiveCfg = Release|Any CPU
 		{ADCF7BDC-F837-49A1-8C00-1B3DCC69C0AA}.Release|x86.Build.0 = Release|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Debug|x64.Build.0 = Debug|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Debug|x86.Build.0 = Debug|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Release|x64.ActiveCfg = Release|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Release|x64.Build.0 = Release|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Release|x86.ActiveCfg = Release|Any CPU
+		{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
