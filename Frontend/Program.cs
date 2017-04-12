@@ -17,7 +17,9 @@ namespace Frontend
             var dir = AppDomain.CurrentDomain.BaseDirectory;
             dir = Path.GetFullPath(Path.Combine(dir, @"..\..\..\..\"));
 
-            if (Directory.Exists(Path.Combine(dir, @"RabbitMQ")))
+            var erl = Process.GetProcessesByName("erl");
+
+            if (erl.Length == 0 && Directory.Exists(Path.Combine(dir, @"RabbitMQ")))
             {
                 if (!Directory.Exists(Path.Combine(dir, @"RabbitMQ\rabbitmq_server-3.6.6")))
                 {
@@ -104,6 +106,7 @@ namespace Frontend
                         break;
                     case ConsoleKey.Escape:
                         processes.ForEach(p => p.Kill());
+                        //erl.ToList().ForEach(e => e.Kill());
                         Environment.Exit(0);
                         break;
 
