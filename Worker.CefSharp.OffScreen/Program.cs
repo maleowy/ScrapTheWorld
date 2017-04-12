@@ -24,22 +24,14 @@ namespace Worker.CefSharp.OffScreen
             InitializeChromium();
 
             Bus.SubscribeAsync("subscriptionId", GetLogic(async url => await Browser.LoadPageAsync(url),
-                async script => await Browser.EvaluateScriptWithReturnAsync(script)));
-
-            Publish();
+                async script => await Browser.EvaluateScriptWithReturnAsync(script),
+                async result => await Bus.PublishAsync(new Result { Data = result })));
 
             Console.ReadLine();
 
             // Clean up Chromium objects.  You need to call this in your application otherwise
             // you will get a crash when closing.
             Cef.Shutdown();
-        }
-
-        private static void Publish()
-        {
-            Bus.Publish(new Node { Url = "http://www.wp.pl", Script = "document.title" });
-            Bus.Publish(new Node { Url = "http://www.onet.pl", Script = "document.title" });
-            Bus.Publish(new Node { Url = "http://www.interia.pl", Script = "document.title" });
         }
 
         private static void InitializeChromium()

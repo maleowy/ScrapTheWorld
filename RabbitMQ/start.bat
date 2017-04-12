@@ -5,9 +5,7 @@ if exist "%current%\rabbitmq_server-3.6.6\" goto Run
 
 :Extract
 
-echo Extract RabbitMQ.zip file and try again.
-pause
-goto Exit
+Powershell.exe -executionpolicy remotesigned -File extract.ps1
 
 :Run
 

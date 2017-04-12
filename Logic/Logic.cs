@@ -12,7 +12,7 @@ namespace Logic
             return "host=localhost;username=guest;password=guest;timeout=60;prefetchcount=1";
         }
 
-        public static Func<Node, Task> GetLogic(Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate)
+        public static Func<Node, Task> GetLogic(Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<string, Task> onResult)
         {
             return async message =>
             {
@@ -25,7 +25,7 @@ namespace Logic
 
                 if (!string.IsNullOrEmpty(message.Script))
                 {
-                    Console.WriteLine(await onEvaluate.Invoke(message.Script));
+                    await onResult.Invoke(await onEvaluate.Invoke(message.Script));
                 }
 
                 Console.WriteLine($"End {message.Url} {GetCurrentTime()}");

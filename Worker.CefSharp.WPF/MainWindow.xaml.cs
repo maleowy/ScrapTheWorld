@@ -83,16 +83,8 @@ namespace Worker.CefSharp.WPF
                     });
 
                     return await Task.FromResult(result);
-                }));
-
-            Publish();
-        }
-
-        private static void Publish()
-        {
-            Bus.Publish(new Node { Url = "http://www.wp.pl", Script = "document.title" });
-            Bus.Publish(new Node { Url = "http://www.onet.pl", Script = "document.title" });
-            Bus.Publish(new Node { Url = "http://www.interia.pl", Script = "document.title" });
+                },
+                async result => await Bus.PublishAsync(new Result { Data = result })));
         }
 
         public void ShowDevTools(object sender, RoutedEventArgs e)

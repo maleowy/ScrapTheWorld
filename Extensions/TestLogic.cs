@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 using CefSharp;
-using Extensions;
 
-namespace Logic
+namespace Extensions
 {
     public static class TestLogic
     {
-        public static async Task Run1(IWebBrowser browser) // Task Delay based
+        public static async Task Run1(this IWebBrowser browser) // Task Delay based
         {
             await Task.Delay(3000);
             browser.Load("https://duckduckgo.com");
@@ -18,7 +17,7 @@ namespace Logic
             await browser.EvaluateScriptAsync("console.log(document.title)");
         }
 
-        public static async Task Run(IWebBrowser browser) // better one
+        public static async Task Run(this IWebBrowser browser) // better one
         {
             await browser.WaitForInitializationAsync();
             await browser.LoadPageAsync("https://duckduckgo.com");
