@@ -28,5 +28,11 @@ namespace Extensions
             await browser.EvaluateScriptAsync("console.log(document.title)");
             await browser.EvaluateScriptAsync("bound.reverseText(document.title)");
         }
+
+        public static async Task<string> InvalidUrl(this IWebBrowser browser)
+        {
+            await browser.LoadPageAsync("http://1qazxcvb.com/");
+            return await browser.EvaluateScriptWithReturnAsync("document.title");
+        }
     }
 }

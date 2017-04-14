@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using CefSharp.Internals;
 
 namespace Extensions
 {
@@ -9,7 +11,7 @@ namespace Extensions
         private readonly Queue<TaskCompletionSource<bool>> _waits = new Queue<TaskCompletionSource<bool>>();
         private bool _signaled;
 
-        public Task WaitAsync()
+        public Task WaitAsync(int seconds = 0)
         {
             lock (_waits)
             {
@@ -20,6 +22,12 @@ namespace Extensions
                 }
 
                 var tcs = new TaskCompletionSource<bool>();
+
+                if (seconds > 0)
+                {
+                    tcs.WithTimeout(TimeSpan.FromSeconds(seconds));
+                }
+
                 _waits.Enqueue(tcs);
                 return tcs.Task;
             }
@@ -41,7 +49,14 @@ namespace Extensions
                 }
             }
 
-            toRelease?.SetResult(true);
+            try
+            {
+                toRelease?.SetResult(true);
+            }
+            catch (Exception ex)
+            {
+                toRelease?.SetException(ex);
+            }
         }
     }
 }

@@ -25,36 +25,61 @@ namespace Extensions
 
         public static bool LoadPage(this IWebBrowser browser, string address = null)
         {
-            AutoResetEvent waitHandle = new AutoResetEvent(false);
-
-            browser.LoadingStateChanged += (obj, args) =>
+            try
             {
-                if (address == null || args.Browser.MainFrame.Url.StartsWith(address))
+                AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+                browser.LoadingStateChanged += (obj, args) =>
                 {
-                    waitHandle.Set();
-                }
-            };
+                    if (address == null || IsSameDomain(args.Browser.MainFrame.Url, address))
+                    {
+                        waitHandle.Set();
+                    }
+                };
 
-            browser.Load(address);
+                browser.Load(address);
 
-            return waitHandle.WaitOne();
+                return waitHandle.WaitOne();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"LoadPage error {address}", ex);
+            }
         }
 
         public static async Task LoadPageAsync(this IWebBrowser browser, string address = null)
         {
-            AsyncAutoResetEvent waitHandle = new AsyncAutoResetEvent();
-
-            browser.LoadingStateChanged += (obj, args) =>
+            try
             {
-                if (address == null || args.Browser.MainFrame.Url.StartsWith(address))
+                AsyncAutoResetEvent waitHandle = new AsyncAutoResetEvent();
+
+                browser.LoadingStateChanged += (obj, args) =>
                 {
-                    waitHandle.Set();
-                }
-            };
+                    if (address == null || IsSameDomain(args.Browser.MainFrame.Url, address))
+                    {
+                        waitHandle.Set();
+                    }
+                };
 
-            browser.Load(address);
+                browser.Load(address);
 
-            await waitHandle.WaitAsync();
+                await waitHandle.WaitAsync(30);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"LoadPageAsync error {address}",  ex);
+            }
+        }
+
+        private static bool IsSameDomain(string url1, string url2)
+        {
+            if (string.IsNullOrEmpty(url1))
+                return false;
+
+            var domain1 = new Uri(url1).Host.Replace("www.", "");
+            var domain2 = new Uri(url2).Host.Replace("www.", "");
+
+            return domain1.Equals(domain2, StringComparison.Ordinal);
         }
 
         public static async Task<string> EvaluateScriptWithReturnAsync(this IWebBrowser browser, string script, TimeSpan? timeout = null, string defaultValue = default(string))
