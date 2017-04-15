@@ -7,6 +7,8 @@ namespace Extensions
 {
     public static class CefSharpExtensions
     {
+        public static int MaxPageLoadTime = 15;
+
         public static void WaitForInitialization(this IWebBrowser browser)
         {
             while (!browser.IsBrowserInitialized)
@@ -39,7 +41,7 @@ namespace Extensions
 
                 browser.Load(address);
 
-                return waitHandle.WaitOne();
+                return waitHandle.WaitOne(TimeSpan.FromSeconds(MaxPageLoadTime));
             }
             catch (Exception ex)
             {
@@ -63,7 +65,7 @@ namespace Extensions
 
                 browser.Load(address);
 
-                await waitHandle.WaitAsync(30);
+                await waitHandle.WaitAsync(MaxPageLoadTime);
             }
             catch (Exception ex)
             {
@@ -80,6 +82,11 @@ namespace Extensions
             var domain2 = new Uri(url2).Host.Replace("www.", "");
 
             return domain1.Equals(domain2, StringComparison.Ordinal);
+        }
+
+        public static string EvaluateScriptWithReturn(this IWebBrowser browser, string script, TimeSpan? timeout = null, string defaultValue = default(string))
+        {
+            return EvaluateScriptWithReturnAsync<string>(browser, script, timeout, defaultValue).Result;
         }
 
         public static async Task<string> EvaluateScriptWithReturnAsync(this IWebBrowser browser, string script, TimeSpan? timeout = null, string defaultValue = default(string))

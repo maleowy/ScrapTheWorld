@@ -53,10 +53,7 @@ namespace Extensions
             {
                 toRelease?.SetResult(true);
             }
-            catch (Exception ex)
-            {
-                toRelease?.SetException(ex);
-            }
+            catch {}
         }
     }
 }
