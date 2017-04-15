@@ -42,11 +42,11 @@ namespace Logic
 
         private static async Task Process(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<string, Task> onResult)
         {
-            Console.WriteLine($"Start {node.Name} {(node.Open ? node.AdditionalData.Url : "")} {GetCurrentTime()}");
+            Console.WriteLine($"Start {node.Name} {(node.Open ? node.Data.Url : "")} {GetCurrentTime()}");
 
             if (node.Open)
             {
-                await onNavigate.Invoke(node.AdditionalData.Url);
+                await onNavigate.Invoke(node.Data.Url);
             }
 
             if (!string.IsNullOrEmpty(node.Script))

@@ -12,12 +12,12 @@ namespace Models
 
         public bool ReturnResults { get; set; }
 
-        public dynamic AdditionalData { get; set; }
+        public dynamic Data { get; set; }
         public List<object> Results { get; set; }
 
         public Node()
         {
-            AdditionalData = new ExpandoObject();
+            Data = new ExpandoObject();
             Results = new List<object>();
         }
     }
