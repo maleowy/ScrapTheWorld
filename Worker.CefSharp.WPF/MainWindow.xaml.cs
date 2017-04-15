@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,18 +75,27 @@ namespace Worker.CefSharp.WPF
         {
             await Browser.WaitForInitializationAsync();
 
-            Bus.SubscribeAsync("subscriptionId", GetLogic(async url => await Browser.LoadPageAsync(url),
-                async script =>
+            Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
+                script =>
                 {
                     string result = null;
-                    await Dispatcher.Invoke(async () =>
+                    AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+                    Task.Run(async () =>
                     {
-                        result = await Browser.EvaluateScriptWithReturnAsync(script);
+                        await Dispatcher.Invoke(async () =>
+                        {
+                            result = await Browser.EvaluateScriptWithReturnAsync(script);
+                            waitHandle.Set();
+                        });
                     });
 
-                    return await Task.FromResult(result);
+                    waitHandle.WaitOne();
+
+                    return Task.FromResult(result);
                 },
-                async result => await Bus.PublishAsync(new Result { Data = result })));
+                async result => await Bus.PublishAsync(new Result { Data = result }),
+                ex => Console.WriteLine(ex.Message)));
         }
 
         public void ShowDevTools(object sender, RoutedEventArgs e)

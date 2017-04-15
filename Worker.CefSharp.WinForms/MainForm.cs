@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
@@ -40,9 +41,10 @@ namespace Worker.CefSharp.WinForms
         {
             await Browser.WaitForInitializationAsync();
 
-            Bus.SubscribeAsync("subscriptionId", GetLogic(async url => await Browser.LoadPageAsync(url),
-                async script => await Browser.EvaluateScriptWithReturnAsync(script),
-                async result => await Bus.PublishAsync(new Result { Data = result })));
+            Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
+                script => Task.FromResult(Browser.EvaluateScriptWithReturn(script)),
+                async result => await Bus.PublishAsync(new Result { Data = result }),
+                ex => Console.WriteLine(ex.Message)));
         }
 
         public void InitializeChromium()

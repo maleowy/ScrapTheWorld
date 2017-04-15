@@ -6,6 +6,8 @@ using Models;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
+using Logic;
 
 namespace Frontend
 {
@@ -25,9 +27,13 @@ namespace Frontend
             AddRabbit();
 
             Bus = RabbitHutch.CreateBus("host=localhost");
-            Bus.Subscribe<Result>("subscriptionId", x => Console.WriteLine(x.Data));
+            Bus.SubscribeAsync<Result>("subscriptionId", x =>
+            {
+                Console.WriteLine(x.Data);
+                return Task.FromResult(true);
+            });
 
-            Console.WriteLine("o - offscreen, f - winforms, w - wpf, p - publish, esc - exit");
+            Console.WriteLine("o - offscreen, f - winforms, w - wpf, p - publish, 1 - flow, esc - exit");
 
             var workers = new List<Process>();
 
@@ -49,8 +55,18 @@ namespace Frontend
                     case ConsoleKey.P:
                         Publish();
                         break;
+                    case ConsoleKey.D1:
+                        Flow1();
+                        break;
                     case ConsoleKey.Escape:
-                        workers.ForEach(p => p.Kill());
+                        workers.ForEach(p =>
+                        {
+                            try
+                            {
+                                p.Kill();
+                            }
+                            catch {}
+                        });
                         //erl.ToList().ForEach(e => e.Kill());
                         Environment.Exit(0);
                         break;
@@ -101,9 +117,14 @@ namespace Frontend
 
         private static void Publish()
         {
-            Bus.Publish(new Node { Url = "http://www.wp.pl", Script = "document.title" });
-            Bus.Publish(new Node { Url = "http://www.onet.pl", Script = "document.title" });
-            Bus.Publish(new Node { Url = "http://www.interia.pl", Script = "document.title" });
+            Bus.Publish(Factory.GetTitleNode("http://www.wp.pl"));
+            Bus.Publish(Factory.GetTitleNode("http://www.onet.pl"));
+            Bus.Publish(Factory.GetTitleNode("http://www.interia.pl"));
+        }
+
+        private static void Flow1()
+        {
+            Bus.Publish(new Node { Name = "flow1" });
         }
 
         private static void StartRabbit()
