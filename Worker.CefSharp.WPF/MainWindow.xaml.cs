@@ -18,6 +18,7 @@ namespace Worker.CefSharp.WPF
     {
         public static IBus Bus;
         public ChromiumWebBrowser Browser;
+        public static ISubscriptionResult SubscriptionResult;
 
         public MainWindow()
         {
@@ -29,6 +30,11 @@ namespace Worker.CefSharp.WPF
             InitializeChromium();
 
             Loaded += MainWindow_Loaded;
+
+            Closed += (sender, args) =>
+            {
+                SubscriptionResult.Dispose();
+            };
         }
 
         private void InitializeChromium()
@@ -75,7 +81,7 @@ namespace Worker.CefSharp.WPF
         {
             await Browser.WaitForInitializationAsync();
 
-            Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
+            SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
                 script =>
                 {
                     string result = null;
@@ -94,6 +100,7 @@ namespace Worker.CefSharp.WPF
 
                     return Task.FromResult(result);
                 },
+                async node => await Bus.PublishAsync(node),
                 async result => await Bus.PublishAsync(new Result { Data = result }),
                 ex => Console.WriteLine(ex.Message)));
         }

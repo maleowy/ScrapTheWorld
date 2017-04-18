@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EasyNetQ;
 using EasyNetQ.SystemMessages;
 using EasyNetQ.Topology;
+using Models;
 
 namespace Tests.EasyNetQ
 {

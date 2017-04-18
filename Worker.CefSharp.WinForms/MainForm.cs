@@ -19,6 +19,7 @@ namespace Worker.CefSharp.WinForms
     {
         public static IBus Bus;
         public ChromiumWebBrowser Browser;
+        public static ISubscriptionResult SubscriptionResult;
 
         public MainForm()
         {
@@ -33,7 +34,9 @@ namespace Worker.CefSharp.WinForms
 
             FormClosed += (sender, args) =>
             {
+                SubscriptionResult.Dispose();
                 Cef.Shutdown();
+                Environment.Exit(0);
             };
         }
 
@@ -41,8 +44,9 @@ namespace Worker.CefSharp.WinForms
         {
             await Browser.WaitForInitializationAsync();
 
-            Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
+            SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
                 script => Task.FromResult(Browser.EvaluateScriptWithReturn(script)),
+                async node => await Bus.PublishAsync(node),
                 async result => await Bus.PublishAsync(new Result { Data = result }),
                 ex => Console.WriteLine(ex.Message)));
         }

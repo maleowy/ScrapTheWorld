@@ -4,10 +4,10 @@ using System.Diagnostics;
 using EasyNetQ;
 using Models;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Logic;
+using static Logic.Logic;
 
 namespace Frontend
 {
@@ -33,7 +33,7 @@ namespace Frontend
                 return Task.FromResult(true);
             });
 
-            Console.WriteLine("o - offscreen, f - winforms, w - wpf, p - publish, 1 - flow, esc - exit");
+            Console.WriteLine("o - offscreen, f - winforms, w - wpf, p - publish, 1 - flow, 2 - flow, esc - exit");
 
             var workers = new List<Process>();
 
@@ -44,13 +44,13 @@ namespace Frontend
                 switch (key)
                 {
                     case ConsoleKey.O:
-                        workers.Add(StartWorker("OffScreen"));
+                        workers.Add(StartWorker("CefSharp.OffScreen"));
                         break;
                     case ConsoleKey.F:
-                        workers.Add(StartWorker("WinForms"));
+                        workers.Add(StartWorker("CefSharp.WinForms"));
                         break;
                     case ConsoleKey.W:
-                        workers.Add(StartWorker("WPF"));
+                        workers.Add(StartWorker("CefSharp.WPF"));
                         break;
                     case ConsoleKey.P:
                         Publish();
@@ -58,14 +58,13 @@ namespace Frontend
                     case ConsoleKey.D1:
                         Flow1();
                         break;
+                    case ConsoleKey.D2:
+                        Flow2();
+                        break;
                     case ConsoleKey.Escape:
                         workers.ForEach(p =>
                         {
-                            try
-                            {
-                                p.Kill();
-                            }
-                            catch {}
+                            IgnoreExceptions(() => p.Kill());
                         });
                         //erl.ToList().ForEach(e => e.Kill());
                         Environment.Exit(0);
@@ -81,8 +80,8 @@ namespace Frontend
             Dir = AppDomain.CurrentDomain.BaseDirectory;
             Dir = Path.GetFullPath(Path.Combine(Dir, @"..\..\..\..\"));
 
-            WorkerDir = Path.Combine(Dir, @"Worker.CefSharp.{0}\bin\x86\Debug");
-            WorkerExe = Path.Combine(WorkerDir, @"Worker.CefSharp.{0}.exe");
+            WorkerDir = Path.Combine(Dir, @"Worker.{0}\bin\x86\Debug");
+            WorkerExe = Path.Combine(WorkerDir, @"Worker.{0}.exe");
         }
 
         private static void AddRabbit()
@@ -127,6 +126,11 @@ namespace Frontend
             Bus.Publish(new Node { Name = "flow1" });
         }
 
+        private static void Flow2()
+        {
+            Bus.Publish(new Node { Name = "flow2" });
+        }
+
         private static void StartRabbit()
         {
             var process = new Process
@@ -143,22 +147,6 @@ namespace Frontend
             {
                 Thread.Sleep(1000);
             }
-        }
-
-        private static bool UrlExists(string url)
-        {
-            var req = WebRequest.Create(url);
-
-            try
-            {
-                req.GetResponse();
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private static void ExtractRabbit()

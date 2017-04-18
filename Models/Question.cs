@@ -1,4 +1,4 @@
-﻿namespace Tests.EasyNetQ
+﻿namespace Models
 {
     public class Question
     {

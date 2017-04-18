@@ -28,6 +28,7 @@ namespace Worker.CefSharp.OffScreen
 
             SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
                 script => Task.FromResult(Browser.EvaluateScriptWithReturn(script)),
+                async node => await Bus.PublishAsync(node),
                 async result => await Bus.PublishAsync(new Result {Data = result}),
                 ex => Console.WriteLine(ex.Message)));
 

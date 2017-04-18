@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Models;
 using Newtonsoft.Json;
@@ -20,18 +21,20 @@ namespace Logic
 
         public static Dictionary<string, string> Scripts = Factory.GetScripts();
 
-        public static Func<Node, Task> GetLogic(Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<string, Task> onResult, Action<Exception> onError)
+        public static Func<Node, Task> GetLogic(Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Exception> onError)
         {
             return async node =>
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(node.Name) == false)
+                    if (node.NextWorker == false && string.IsNullOrEmpty(node.Name) == false)
                     {
-                        node = FindNodeByName(node.Name);
+                        var found = FindNodeByName(node.Name);
+                        found.Data = ((ExpandoObject)found.Data).Merge((ExpandoObject)node.Data);
+                        node = found;
                     }
 
-                    await Process(node, onNavigate, onEvaluate, onResult);
+                    await Process(node, onNavigate, onEvaluate, onNext, onResult);
                 }
                 catch (Exception ex)
                 {
@@ -40,13 +43,18 @@ namespace Logic
             };
         }
 
-        private static async Task Process(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<string, Task> onResult)
+        private static async Task Process(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult)
         {
             Console.WriteLine($"Start {node.Name} {(node.Open ? node.Data.Url : "")} {GetCurrentTime()}");
 
             if (node.Open)
             {
                 await onNavigate.Invoke(node.Data.Url);
+            }
+
+            if (node.WaitTime > 0)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(node.WaitTime));
             }
 
             if (!string.IsNullOrEmpty(node.Script))
@@ -72,24 +80,33 @@ namespace Logic
 
                     if (n.NextNode != null)
                     {
-                        await Next(n, onNavigate, onEvaluate, onResult);
+                        await Next(n, onNavigate, onEvaluate, onNext, onResult);
                     }
                 });
 
             }
             else if (node.NextNode != null)
             {
-                await Next(node, onNavigate, onEvaluate, onResult);
+                await Next(node, onNavigate, onEvaluate, onNext, onResult);
             }
 
             //Console.WriteLine($"End {node.Name} {GetCurrentTime()}");
         }
 
-        private static async Task Next(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<string, Task> onResult)
+        private static async Task Next(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult)
         {
             var newNode = FindNodeByName(node.NextNode);
+            newNode.LastResults = new List<object>(node.Results);
+            newNode.Data = ((ExpandoObject)node.Data).Merge((ExpandoObject)newNode.Data);
 
-            await Process(newNode, onNavigate, onEvaluate, onResult);               
+            if (newNode.NextWorker)
+            {
+                await onNext(newNode);
+            }
+            else
+            {
+                await Process(newNode, onNavigate, onEvaluate, onNext, onResult);
+            }
         }
 
         private static Node FindNodeByName(string name)
@@ -97,7 +114,32 @@ namespace Logic
             return Nodes.First(n => n.Name == name).Clone();
         }
 
-        private static string GetCurrentTime()
+        public static bool UrlExists(string url)
+        {
+            var req = WebRequest.Create(url);
+
+            try
+            {
+                req.GetResponse();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void IgnoreExceptions(Action action)
+        {
+            try
+            {
+                action.Invoke();
+            }
+            catch { }
+        }
+
+        public static string GetCurrentTime()
         {
             return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
         }

@@ -11,14 +11,6 @@ namespace Worker.CefSharp.WPF
             window.Show();
         }
 
-        //protected override void OnStartup(StartupEventArgs e)
-        //{
-        //    base.OnStartup(e);
-
-        //    var settings = new CefSettings();
-        //    Cef.Initialize(settings, true, null);
-        //}
-
         protected override void OnExit(ExitEventArgs e)
         {
             Cef.Shutdown();
