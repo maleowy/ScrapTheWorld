@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Models;
 
 namespace Logic
@@ -44,7 +45,7 @@ namespace Logic
             return new Node
             {
                 Open = true,
-                Data = new { Url = url },
+                Data = new { Guid = Guid.NewGuid(), Url = url },
                 Script = "self.Results = [document.title];",
                 ReturnResults = true
             };

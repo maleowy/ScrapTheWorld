@@ -10,6 +10,8 @@ using CefSharp.Wpf;
 using EasyNetQ;
 using Extensions;
 using Models;
+using Serilog;
+using Serilog.Core;
 using static Logic.Logic;
 
 namespace Worker.CefSharp.WPF
@@ -19,6 +21,7 @@ namespace Worker.CefSharp.WPF
         public static IBus Bus;
         public ChromiumWebBrowser Browser;
         public static ISubscriptionResult SubscriptionResult;
+        public static Logger Logger;
 
         public MainWindow()
         {
@@ -27,6 +30,11 @@ namespace Worker.CefSharp.WPF
             InitializeComponent();
 
             Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+
+            Logger = new LoggerConfiguration()
+                .WriteTo.RollingFile("log.txt", retainedFileCountLimit: 7)
+                .CreateLogger();
+
             InitializeChromium();
 
             Loaded += MainWindow_Loaded;
@@ -81,7 +89,8 @@ namespace Worker.CefSharp.WPF
         {
             await Browser.WaitForInitializationAsync();
 
-            SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
+            SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(node => Logger.Information("{@Node}", node),
+                url => Task.FromResult(Browser.LoadPage(url)),
                 script =>
                 {
                     string result = null;
@@ -102,7 +111,12 @@ namespace Worker.CefSharp.WPF
                 },
                 async node => await Bus.PublishAsync(node),
                 async result => await Bus.PublishAsync(new Result { Data = result }),
-                ex => Console.WriteLine(ex.Message)));
+                async node =>
+                {
+                    Logger.Error("{@Node}", node);
+                    await Bus.PublishAsync(new ErrorResult { Node = node });
+                },
+                node => {}));
         }
 
         public void ShowDevTools(object sender, RoutedEventArgs e)

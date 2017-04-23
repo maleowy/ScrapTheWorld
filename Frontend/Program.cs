@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Logic;
+using Serilog;
+using Serilog.Core;
 using static Logic.Logic;
 
 namespace Frontend
@@ -14,6 +16,7 @@ namespace Frontend
     class Program
     {
         public static IBus Bus;
+        public static Logger Logger;
 
         public static string Dir;
         public static string WorkerDir;
@@ -27,9 +30,20 @@ namespace Frontend
             AddRabbit();
 
             Bus = RabbitHutch.CreateBus("host=localhost");
-            Bus.SubscribeAsync<Result>("subscriptionId", x =>
+
+            Logger = new LoggerConfiguration()
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+
+            var resultSubscription = Bus.SubscribeAsync<Result>("subscriptionId", x =>
             {
-                Console.WriteLine(x.Data);
+                Logger.Information(x.Data);
+                return Task.FromResult(true);
+            });
+
+            var errorSubscription = Bus.SubscribeAsync<ErrorResult>("subscriptionId", x =>
+            {
+                Logger.Error("{@Node}", x.Node);
                 return Task.FromResult(true);
             });
 
@@ -62,6 +76,10 @@ namespace Frontend
                         Flow2();
                         break;
                     case ConsoleKey.Escape:
+
+                        resultSubscription.Dispose();
+                        errorSubscription.Dispose();
+
                         workers.ForEach(p =>
                         {
                             IgnoreExceptions(() => p.Kill());
@@ -123,12 +141,12 @@ namespace Frontend
 
         private static void Flow1()
         {
-            Bus.Publish(new Node { Name = "flow1" });
+            Bus.Publish(new Node { Name = "flow1", Data = new { Guid = Guid.NewGuid() } });
         }
 
         private static void Flow2()
         {
-            Bus.Publish(new Node { Name = "flow2" });
+            Bus.Publish(new Node { Name = "flow2", Data = new { Guid = Guid.NewGuid() } });
         }
 
         private static void StartRabbit()

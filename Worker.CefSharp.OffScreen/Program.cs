@@ -9,6 +9,8 @@ using EasyNetQ;
 using Extensions;
 using Logic;
 using Models;
+using Serilog;
+using Serilog.Core;
 using static Logic.Logic;
 
 namespace Worker.CefSharp.OffScreen
@@ -17,6 +19,7 @@ namespace Worker.CefSharp.OffScreen
     {
         public static IBus Bus;
         public static ISubscriptionResult SubscriptionResult;
+        public static Logger Logger;
         public static ChromiumWebBrowser Browser;
 
         public static void Main(string[] args)
@@ -24,15 +27,25 @@ namespace Worker.CefSharp.OffScreen
             Console.Title = "Worker CefSharp OffScreen";
 
             Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+
+            Logger = new LoggerConfiguration()
+                .WriteTo.ColoredConsole()
+                .WriteTo.RollingFile("log.txt", retainedFileCountLimit: 7)
+                .CreateLogger();
+
             InitializeChromium();
 
-            SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(url => Task.FromResult(Browser.LoadPage(url)),
+            SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(node => Logger.Information("{@Node}", node),
+                url => Task.FromResult(Browser.LoadPage(url)),
                 script => Task.FromResult(Browser.EvaluateScriptWithReturn(script)),
                 async node => await Bus.PublishAsync(node),
                 async result => await Bus.PublishAsync(new Result {Data = result}),
-                ex => Console.WriteLine(ex.Message)));
-
-            //Test();
+                async node =>
+                {
+                    Logger.Error("{@Node}", node);
+                    await Bus.PublishAsync(new ErrorResult { Node = node });
+                },
+                node => {}));
 
             Console.ReadLine();
 
@@ -51,7 +64,7 @@ namespace Worker.CefSharp.OffScreen
 
             await TestLogic.Run(Browser);
 
-            Bus.Publish(new Node {Name = "flow1"});
+            Bus.Publish(new Node {Name = "flow1", Data = new { Guid = Guid.NewGuid() } });
 
             Bus.Publish(Factory.GetTitleNode("http://www.wp.pl"));
             Bus.Publish(Factory.GetTitleNode("http://www.onet.pl"));

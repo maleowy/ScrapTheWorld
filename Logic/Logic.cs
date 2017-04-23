@@ -21,7 +21,7 @@ namespace Logic
 
         public static Dictionary<string, string> Scripts = Factory.GetScripts();
 
-        public static Func<Node, Task> GetLogic(Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Exception> onError)
+        public static Func<Node, Task> GetLogic(Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
             return async node =>
             {
@@ -34,66 +34,85 @@ namespace Logic
                         node = found;
                     }
 
-                    await Process(node, onNavigate, onEvaluate, onNext, onResult);
+                    await Process(node, onStart, onNavigate, onEvaluate, onNext, onResult, onError, onEnd);
                 }
                 catch (Exception ex)
                 {
-                    onError(ex);
+                    node.Error = ex.ToString();
+                    onError(node);
                 }
             };
         }
 
-        private static async Task Process(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult)
+        private static async Task Process(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
-            Console.WriteLine($"Start {node.Name} {(node.Open ? node.Data.Url : "")} {GetCurrentTime()}");
-
-            if (node.Open)
-            {
-                await onNavigate.Invoke(node.Data.Url);
-            }
-
-            if (node.WaitTime > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(node.WaitTime));
-            }
-
-            if (!string.IsNullOrEmpty(node.Script))
-            {
-                string script = @"(function() { " +
-                                $"var self = {JsonConvert.SerializeObject(node)};" +
-                                $"{(Scripts.ContainsKey(node.Script) ? Scripts[node.Script] : node.Script)}" +
-                                "return JSON.stringify([self]);" +
-                                "})();";
-
-                string scriptResult = await onEvaluate.Invoke(script);
-                var list = JsonConvert.DeserializeObject<List<object>>(scriptResult);
-                var nodes = (list ?? new List<object>()).Select(x => JsonConvert.DeserializeObject<Node>(x.ToString())).ToList();
-
-                nodes.ForEach(async n =>
+            try
+            { 
+                onStart(node);
+            
+                if (node.Open)
                 {
-                    n.Results = n.Results ?? new List<dynamic>();
+                    await onNavigate.Invoke(node.Data.Url);
+                }
 
-                    if (n.ReturnResults)
+                if (node.WaitTime > 0)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(node.WaitTime));
+                }
+
+                if (!string.IsNullOrEmpty(node.Script))
+                {
+                    string script = @"(function() { " +
+                                    $"var self = {JsonConvert.SerializeObject(node)};" +
+                                    "try { " +
+                                    $"{(Scripts.ContainsKey(node.Script) ? Scripts[node.Script] : node.Script)}" +
+                                    "} catch(err) {" +
+                                    "self.Error = err.message;" +
+                                    "self.NextNode = null;" +
+                                    "}" +
+                                    "return JSON.stringify([self]);" +
+                                    "})();";
+
+                    string scriptResult = await onEvaluate.Invoke(script);
+                    var list = JsonConvert.DeserializeObject<List<object>>(scriptResult);
+                    var nodes = (list ?? new List<object>()).Select(x => JsonConvert.DeserializeObject<Node>(x.ToString())).ToList();
+
+                    foreach (var n in nodes)
                     {
-                        await onResult(JsonConvert.SerializeObject(n.Results));
+                        if (n.Error != null)
+                        {
+                            throw new Exception(n.Error);
+                        }
+
+                        n.Results = n.Results ?? new List<dynamic>();
+
+                        if (n.ReturnResults)
+                        {
+                            await onResult(JsonConvert.SerializeObject(n.Results));
+                        }
+
+                        if (n.NextNode != null)
+                        {
+                            await Next(n, onStart, onNavigate, onEvaluate, onNext, onResult, onError, onEnd);
+                        }
                     }
 
-                    if (n.NextNode != null)
-                    {
-                        await Next(n, onNavigate, onEvaluate, onNext, onResult);
-                    }
-                });
+                }
+                else if (node.NextNode != null)
+                {
+                    await Next(node, onStart, onNavigate, onEvaluate, onNext, onResult, onError, onEnd);
+                }
 
+                onEnd(node);
             }
-            else if (node.NextNode != null)
+            catch (Exception ex)
             {
-                await Next(node, onNavigate, onEvaluate, onNext, onResult);
+                node.Error = ex.ToString();
+                onError(node);
             }
-
-            //Console.WriteLine($"End {node.Name} {GetCurrentTime()}");
         }
 
-        private static async Task Next(Node node, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult)
+        private static async Task Next(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
             var newNode = FindNodeByName(node.NextNode);
             newNode.LastResults = new List<object>(node.Results);
@@ -105,7 +124,7 @@ namespace Logic
             }
             else
             {
-                await Process(newNode, onNavigate, onEvaluate, onNext, onResult);
+                await Process(newNode, onStart, onNavigate, onEvaluate, onNext, onResult, onError, onEnd);
             }
         }
 

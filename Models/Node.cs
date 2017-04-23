@@ -17,6 +17,7 @@ namespace Models
         public dynamic Data { get; set; }
         public List<object> LastResults { get; set; }
         public List<object> Results { get; set; }
+        public string Error { get; set; }
 
         public Node()
         {
