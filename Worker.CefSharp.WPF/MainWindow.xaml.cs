@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -52,6 +51,8 @@ namespace Worker.CefSharp.WPF
             Cef.Initialize(settings, true, null);
 
             Browser = new ChromiumWebBrowser();
+
+            Browser.BrowserSettings.ImageLoading = CefState.Disabled;
 
             var boundObj = new BoundObject();
             Browser.RegisterJsObject("bound", boundObj);

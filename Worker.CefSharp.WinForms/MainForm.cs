@@ -84,6 +84,8 @@ namespace Worker.CefSharp.WinForms
                 Dock = DockStyle.Fill
             };
 
+            Browser.BrowserSettings.ImageLoading = CefState.Disabled;
+
             var boundObj = new BoundObject();
             Browser.RegisterJsObject("bound", boundObj);
 

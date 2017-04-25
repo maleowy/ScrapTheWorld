@@ -27,6 +27,7 @@ namespace Frontend
             Console.Title = "Frontend";
 
             PreparePaths();
+            AddChromePortable();
             AddRabbit();
 
             Bus = RabbitHutch.CreateBus("host=localhost");
@@ -47,7 +48,7 @@ namespace Frontend
                 return Task.FromResult(true);
             });
 
-            Console.WriteLine("o - offscreen, f - winforms, w - wpf, p - publish, 1 - flow, 2 - flow, esc - exit");
+            Console.WriteLine("o - offscreen, f - winforms, w - wpf, s - selenium, p - publish, 1 - flow, 2 - flow, esc - exit");
 
             var workers = new List<Process>();
 
@@ -65,6 +66,9 @@ namespace Frontend
                         break;
                     case ConsoleKey.W:
                         workers.Add(StartWorker("CefSharp.WPF"));
+                        break;
+                    case ConsoleKey.S:
+                        workers.Add(StartWorker("Selenium"));
                         break;
                     case ConsoleKey.P:
                         Publish();
@@ -114,6 +118,17 @@ namespace Frontend
                 }
 
                 StartRabbit();
+            }
+        }
+
+        private static void AddChromePortable()
+        {
+            if (Directory.Exists(Path.Combine(Dir, @"GoogleChromePortable")))
+            {
+                if (!File.Exists(Path.Combine(Dir, @"GoogleChromePortable\GoogleChromePortable.exe")))
+                {
+                    Process.Start(Path.Combine(Dir, @"GoogleChromePortable_58.0.3029.81_online.paf.exe"));
+                }
             }
         }
 

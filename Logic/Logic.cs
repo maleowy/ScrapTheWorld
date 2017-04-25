@@ -63,6 +63,7 @@ namespace Logic
                 if (!string.IsNullOrEmpty(node.Script))
                 {
                     string script = @"(function() { " +
+                                    "window.alert = function() {};" +
                                     $"var self = {JsonConvert.SerializeObject(node)};" +
                                     "try { " +
                                     $"{(Scripts.ContainsKey(node.Script) ? Scripts[node.Script] : node.Script)}" +
