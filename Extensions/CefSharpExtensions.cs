@@ -11,17 +11,14 @@ namespace Extensions
 
         public static void WaitForInitialization(this IWebBrowser browser)
         {
-            while (!browser.IsBrowserInitialized)
-            {
-                Thread.Sleep(100);
-            }
+            WaitForInitializationAsync(browser).Wait();
         }
 
         public static async Task WaitForInitializationAsync(this IWebBrowser browser)
         {
             while (!browser.IsBrowserInitialized)
             {
-                await Task.Delay(100);
+                await Task.Delay(1000);
             }
         }
 
@@ -98,9 +95,21 @@ namespace Extensions
         {
             while (browser.IsLoading)
             {
-                await Task.Delay(100);
+                await Task.Delay(1000);
             }
 
+            var result = await EvaluateWithReturnAsync(browser, script, timeout, defaultValue);
+
+            while (await EvaluateWithReturnAsync(browser, "document.readyState", timeout, "") != "complete")
+            {
+                await Task.Delay(1000);
+            }
+
+            return result;
+        }
+
+        private static async Task<T> EvaluateWithReturnAsync<T>(IWebBrowser browser, string script, TimeSpan? timeout, T defaultValue)
+        {
             return await browser.EvaluateScriptAsync(script, timeout)
                 .ContinueWith(x => !x.IsFaulted && x.Result.Success ? (T)x.Result.Result : defaultValue);
         }
