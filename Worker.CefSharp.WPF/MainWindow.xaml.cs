@@ -50,9 +50,13 @@ namespace Worker.CefSharp.WPF
             settings.IgnoreCertificateErrors = true;
             Cef.Initialize(settings, true, null);
 
-            Browser = new ChromiumWebBrowser();
-
-            Browser.BrowserSettings.ImageLoading = CefState.Disabled;
+            Browser = new ChromiumWebBrowser
+            {
+                LifeSpanHandler = new MyLifeSpanHandler(),
+                RequestHandler = new MyRequestHandler(),
+                RenderProcessMessageHandler = new MyRenderProcessMessageHandler(),
+                BrowserSettings = {ImageLoading = CefState.Disabled}
+            };
 
             var boundObj = new BoundObject();
             Browser.RegisterJsObject("bound", boundObj);

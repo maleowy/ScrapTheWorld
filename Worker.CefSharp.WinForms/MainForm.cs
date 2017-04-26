@@ -81,10 +81,12 @@ namespace Worker.CefSharp.WinForms
 
             Browser = new ChromiumWebBrowser("about:blank")
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                LifeSpanHandler = new MyLifeSpanHandler(),
+                RequestHandler = new MyRequestHandler(),
+                RenderProcessMessageHandler = new MyRenderProcessMessageHandler(),
+                BrowserSettings = { ImageLoading = CefState.Disabled }
             };
-
-            Browser.BrowserSettings.ImageLoading = CefState.Disabled;
 
             var boundObj = new BoundObject();
             Browser.RegisterJsObject("bound", boundObj);

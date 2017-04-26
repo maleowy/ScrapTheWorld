@@ -82,7 +82,13 @@ namespace Worker.CefSharp.OffScreen
             Cef.Initialize(settings, true, null);
 
             // Create the offscreen Chromium Browser.
-            Browser = new ChromiumWebBrowser("about:blank");
+            Browser = new ChromiumWebBrowser("about:blank")
+            {
+                LifeSpanHandler = new MyLifeSpanHandler(),
+                RequestHandler = new MyRequestHandler(),
+                RenderProcessMessageHandler = new MyRenderProcessMessageHandler(),
+                BrowserSettings = { ImageLoading = CefState.Disabled }
+            };
 
             var boundObj = new BoundObject();
             Browser.RegisterJsObject("bound", boundObj);
