@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Logic;
 using Serilog;
 using Serilog.Core;
-using static Logic.Logic;
+using static Logic.Helpers;
 
 namespace Frontend
 {
@@ -25,6 +25,7 @@ namespace Frontend
         static void Main(string[] args)
         {
             Console.Title = "Frontend";
+            Console.WriteLine("Waiting for RabbitMQ...");
 
             PreparePaths();
             AddChromePortable();
@@ -48,7 +49,8 @@ namespace Frontend
                 return Task.FromResult(true);
             });
 
-            Console.WriteLine("o - offscreen, f - winforms, w - wpf, s - selenium, p - publish, 1 - flow, 2 - flow, esc - exit");
+            Console.Clear();
+            Console.WriteLine("o - offscreen, f - winforms, w - wpf, s - selenium, r - remote debugging, p - publish, 1 - flow, 2 - flow, esc - exit");
 
             var workers = new List<Process>();
 
@@ -69,6 +71,9 @@ namespace Frontend
                         break;
                     case ConsoleKey.S:
                         workers.Add(StartWorker("Selenium"));
+                        break;
+                    case ConsoleKey.R:
+                        workers.Add(StartWorker("RemoteDebugging"));
                         break;
                     case ConsoleKey.P:
                         Publish();

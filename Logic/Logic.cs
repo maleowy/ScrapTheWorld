@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Models;
 using Newtonsoft.Json;
@@ -62,8 +60,11 @@ namespace Logic
 
                 if (!string.IsNullOrEmpty(node.Script))
                 {
-                    string script = @"(function() { " +
-                                    "window.alert = function() {};" +
+                    string script = "window.alert = function() {};" +
+                                    "window.onbeforeunload = null;" +
+                                    "window.onunload = null;" +
+
+                                    @"(function() { " +
                                     $"var self = {JsonConvert.SerializeObject(node)};" +
                                     "try { " +
                                     $"{(Scripts.ContainsKey(node.Script) ? Scripts[node.Script] : node.Script)}" +
@@ -132,36 +133,6 @@ namespace Logic
         private static Node FindNodeByName(string name)
         {
             return Nodes.First(n => n.Name == name).Clone();
-        }
-
-        public static bool UrlExists(string url)
-        {
-            var req = WebRequest.Create(url);
-
-            try
-            {
-                req.GetResponse();
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public static void IgnoreExceptions(Action action)
-        {
-            try
-            {
-                action.Invoke();
-            }
-            catch { }
-        }
-
-        public static string GetCurrentTime()
-        {
-            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
         }
     }
 }

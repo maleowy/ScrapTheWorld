@@ -75,6 +75,7 @@ namespace Worker.CefSharp.WinForms
 
             var settings = new CefSettings();
             settings.CefCommandLineArgs.Add("disable-gpu", "1");
+            //settings.RemoteDebuggingPort = 9222;
 
             settings.IgnoreCertificateErrors = true;
             Cef.Initialize(settings, true, null);
