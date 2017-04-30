@@ -40,19 +40,14 @@ namespace Worker.RemoteDebugging
 
         public static List<string> GetUrls()
         {
-            var invalidTitles = new List<string> { "Chrome Media Router", "Worker pid" };
-
             RestClient client = new RestClient("http://localhost:9222");
             RestRequest req = new RestRequest("/json/list");
             var resp = client.Execute(req);
 
             var jarray = (JArray)JsonConvert.DeserializeObject(resp.Content);
 
-            var urls = jarray.ToList().Where(x =>
-            {
-                var title = x["title"].ToString();
-                return !invalidTitles.Any(it => title.StartsWith(it));
-            }).Select(x => x["webSocketDebuggerUrl"].ToString()).ToList();
+            var urls = jarray.ToList().Where(x => x["type"].ToString() == "page" && x["webSocketDebuggerUrl"] != null)
+                .Select(x => x["webSocketDebuggerUrl"].ToString()).ToList();
 
             return urls;
         }

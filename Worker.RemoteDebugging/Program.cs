@@ -43,6 +43,7 @@ namespace Worker.RemoteDebugging
 
             var urls = MyClientWebSocket.GetUrls();
             var firstUrl = urls.First();
+            Console.Title += " - " + firstUrl;
 
             SubscriptionResult = Bus.SubscribeAsync("subscriptionId", GetLogic(node => Logger.Information("{@Node}", node),
                 url => 
