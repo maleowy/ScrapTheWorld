@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace Models
 {
@@ -24,6 +25,16 @@ namespace Models
             Data = new ExpandoObject();
             LastResults = new List<object>();
             Results = new List<object>();
+        }
+
+        public override string ToString()
+        {
+            return $"{(NextWorker ? "worker " : "")}{(WaitTime > 0 ? "wait " + WaitTime + " " : "")}{(Open ? "open" : Script)}{ExpandoToString(Data)}{(ReturnResults ? " return" : "")}";
+        }
+
+        private string ExpandoToString(ExpandoObject expando)
+        {
+            return expando.Any() ? " " + string.Join(" ", expando.Select(x => x.Key + " \"" + x.Value + "\"")) : "";
         }
     }
 }
