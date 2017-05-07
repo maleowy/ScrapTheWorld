@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,7 +10,7 @@ namespace Persistence
 {
     public class PersistenceController : ApiController
     {
-        private static readonly string DbName = "DB.db";
+        private static readonly string DbName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DB.db");
 
         [HttpGet]
         public IEnumerable<KeyValue> Get(string table)
@@ -62,7 +63,8 @@ namespace Persistence
         [HttpGet]
         public HttpResponseMessage Get()
         {
-            var response = new HttpResponseMessage { Content = new StringContent(File.ReadAllText("index.html")) };
+            var indexPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html");
+            var response = new HttpResponseMessage { Content = new StringContent(File.ReadAllText(indexPath)) };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
 
             return response;
