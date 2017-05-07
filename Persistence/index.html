@@ -1,0 +1,133 @@
+﻿<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scrap The World</title>
+
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	
+    <link rel="shortcut icon" type="image/png" href="http://iconshow.me/media/images/Mixed/line-icon/png/256/world-256.png" />
+</head>
+<body ng-controller="AppCtrl" ng-app="MyApp">
+
+
+<form layout layout-align="center" layout-padding>
+    <div layout="row" flex>
+        <md-input-container flex class="md-icon-float md-block md-title">
+			<md-icon class="material-icons">search</md-icon>
+            <label>Find...</label>
+            <input type="text" ng-model="searchText" />
+        </md-input-container>
+    </div>
+</form>
+
+
+<div ng-cloak="">
+    <md-content>
+        <md-list flex>
+			<md-subheader class="md-no-sticky">Scripts</md-subheader>
+            <md-list-item class="md-3-line" ng-repeat="item in scripts | filter:searchText" ng-click="select(item)">
+                <div class="md-list-item-text" layout="column">
+                    <h3>{{ item.Key }}</h3>
+                    <h4>{{ item.Value }}</h4>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+</div>
+
+
+<md-content md-theme="docs-dark" layout-gt-sm="column" layout-padding>
+    <div>
+	  <md-input-container>
+		<label>Key</label>
+		<input ng-model="selected.Key">
+	  </md-input-container>
+	  
+	<md-input-container class="md-block">
+	  <label>Value</label>
+	  <textarea ng-model="selected.Value" rows="5" md-select-on-focus ></textarea>
+	</md-input-container>
+
+	<md-button ng-click="save()" class="md-raised md-primary" ng-disabled="!selected.Key || !selected.Value">Save</md-button>
+	<md-button ng-click="delete()" class="md-raised md-primary" ng-disabled="!selected.Key || !exists(selected.Key)">Delete</md-button>
+	</div>
+</md-content>
+
+
+<!-- Angular Material requires Angular.js Libraries -->
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+<!-- Angular Material Library -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+
+<script type="text/javascript">
+    
+    var app = angular.module('MyApp', ['ngMaterial'])
+	.config(function($mdThemingProvider) {
+
+		$mdThemingProvider.theme('default')
+		.primaryPalette('blue');
+	
+		$mdThemingProvider.theme('docs-dark')
+		  .primaryPalette('blue')
+		  .dark();
+
+	})
+    .controller('AppCtrl', ['$scope', '$http', function ($scope, $http) {
+
+        $scope.url = 'http://localhost:8081/api/Persistence?table=test';
+        $scope.scripts = [];
+		$scope.selected = null;
+		
+		$scope.select = function(item) {
+			$scope.selected = { Key: item.Key, Value: item.Value };
+		}
+		
+        $scope.load = function() {
+			$http.get($scope.url).then(function(response) {
+				$scope.scripts = response.data;
+			});
+		}
+		
+		$scope.exists = function(key) {
+			if (_.findWhere($scope.scripts, { Key: key }))
+				return true;
+				
+			return false;
+		}
+		
+		$scope.save = function() {
+					
+			if ($scope.exists($scope.selected.Key)) {
+				$http.put($scope.url + '&key=' + $scope.selected.Key, $scope.selected.Value).then(function(response) {
+					$scope.load();
+				});
+			}
+			else 
+			{
+				$http.post($scope.url + '&key=' + $scope.selected.Key, $scope.selected.Value).then(function(response) {
+					$scope.load();
+				});
+			}
+		}
+		
+		$scope.delete = function() {
+			$http.delete($scope.url + '&key=' + $scope.selected.Key).then(function(response) {
+				$scope.load();
+			});
+		}
+		
+		$scope.load();
+    }]);
+
+</script>
+
+</body>
+</html>
