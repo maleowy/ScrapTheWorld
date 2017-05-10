@@ -115,7 +115,7 @@ namespace Worker.CefSharp.WPF
                     return Task.FromResult(result);
                 },
                 async node => await Bus.PublishAsync(node),
-                async result => await Bus.PublishAsync(new Result { Data = result }),
+                async node => await Bus.PublishAsync(new Result { Node = node }),
                 async node =>
                 {
                     Logger.Error("{@Node}", node);

@@ -7,14 +7,19 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Logic;
+using Microsoft.Owin.Hosting;
+using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
-using static Logic.Helpers;
+using static Helpers.Helpers;
 
 namespace Frontend
 {
     class Program
     {
+        public static readonly string IP = GetLocalIPAddress();
+        public static readonly int Port = 8080;
+
         public static IBus Bus;
         public static Logger Logger;
 
@@ -28,7 +33,7 @@ namespace Frontend
             Console.WriteLine("Waiting for RabbitMQ...");
 
             PreparePaths();
-            AddChromePortable();
+            AddPersistence();
             AddRabbit();
 
             Bus = RabbitHutch.CreateBus("host=localhost");
@@ -39,12 +44,15 @@ namespace Frontend
 
             var resultSubscription = Bus.SubscribeAsync<Result>("subscriptionId", x =>
             {
-                Logger.Information(x.Data);
+                var data = JsonConvert.SerializeObject(x.Node.Results);
+                HelloHub.ReturnResults(x.Node.Data.Guid, data, "done");
+                Logger.Information(data);
                 return Task.FromResult(true);
             });
 
             var errorSubscription = Bus.SubscribeAsync<ErrorResult>("subscriptionId", x =>
             {
+                HelloHub.ReturnResults(x.Node.Data.Guid, x.Node.Error, "error");
                 Logger.Error("{@Node}", x.Node);
                 return Task.FromResult(true);
             });
@@ -54,51 +62,58 @@ namespace Frontend
 
             var workers = new List<Process>();
 
-            while (true)
+            var url = $"http://+:{Port}";
+            Console.Title += $" - http://{IP}:{Port}";
+
+
+            using (WebApp.Start<Startup>(url))
             {
-                ConsoleKey key = Console.ReadKey().Key;
-
-                switch (key)
+                while (true)
                 {
-                    case ConsoleKey.O:
-                        workers.Add(StartWorker("CefSharp.OffScreen"));
-                        break;
-                    case ConsoleKey.F:
-                        workers.Add(StartWorker("CefSharp.WinForms"));
-                        break;
-                    case ConsoleKey.W:
-                        workers.Add(StartWorker("CefSharp.WPF"));
-                        break;
-                    case ConsoleKey.S:
-                        workers.Add(StartWorker("Selenium"));
-                        break;
-                    case ConsoleKey.R:
-                        workers.Add(StartWorker("RemoteDebugging"));
-                        break;
-                    case ConsoleKey.P:
-                        Publish();
-                        break;
-                    case ConsoleKey.D1:
-                        Flow1();
-                        break;
-                    case ConsoleKey.D2:
-                        Flow2();
-                        break;
-                    case ConsoleKey.Escape:
+                    ConsoleKey key = Console.ReadKey().Key;
 
-                        resultSubscription.Dispose();
-                        errorSubscription.Dispose();
+                    switch (key)
+                    {
+                        case ConsoleKey.O:
+                            workers.Add(StartWorker("CefSharp.OffScreen"));
+                            break;
+                        case ConsoleKey.F:
+                            workers.Add(StartWorker("CefSharp.WinForms"));
+                            break;
+                        case ConsoleKey.W:
+                            workers.Add(StartWorker("CefSharp.WPF"));
+                            break;
+                        case ConsoleKey.S:
+                            workers.Add(StartWorker("Selenium"));
+                            break;
+                        case ConsoleKey.R:
+                            workers.Add(StartWorker("RemoteDebugging"));
+                            break;
+                        case ConsoleKey.P:
+                            Publish();
+                            break;
+                        case ConsoleKey.D1:
+                            Flow1();
+                            break;
+                        case ConsoleKey.D2:
+                            Flow2();
+                            break;
+                        case ConsoleKey.Escape:
 
-                        workers.ForEach(p =>
-                        {
-                            IgnoreExceptions(() => p.Kill());
-                        });
-                        //erl.ToList().ForEach(e => e.Kill());
-                        Environment.Exit(0);
-                        break;
+                            resultSubscription.Dispose();
+                            errorSubscription.Dispose();
+
+                            workers.ForEach(p =>
+                            {
+                                IgnoreExceptions(() => p.Kill());
+                            });
+                            //erl.ToList().ForEach(e => e.Kill());
+                            Environment.Exit(0);
+                            break;
+                    }
+
+                    Console.WriteLine();
                 }
-
-                Console.WriteLine();
             }
         }
 
@@ -126,13 +141,15 @@ namespace Frontend
             }
         }
 
-        private static void AddChromePortable()
+        private static void AddPersistence()
         {
-            if (Directory.Exists(Path.Combine(Dir, @"GoogleChromePortable")))
+            if (Directory.Exists(Path.Combine(Dir, @"Persistence")))
             {
-                if (!File.Exists(Path.Combine(Dir, @"GoogleChromePortable\GoogleChromePortable.exe")))
+                var persistencePath = Path.Combine(Dir, @"Persistence\bin\Debug\Persistence.exe");
+
+                if (File.Exists(persistencePath))
                 {
-                    Process.Start(Path.Combine(Dir, @"GoogleChromePortable_58.0.3029.81_online.paf.exe"));
+                    Process.Start(persistencePath);
                 }
             }
         }

@@ -19,7 +19,7 @@ namespace Logic
 
         public static Dictionary<string, string> Scripts = Factory.GetScripts();
 
-        public static Func<Node, Task> GetLogic(Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Node> onError, Action<Node> onEnd)
+        public static Func<Node, Task> GetLogic(Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<Node, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
             return async node =>
             {
@@ -27,7 +27,7 @@ namespace Logic
                 {
                     if (node.NextWorker == false && string.IsNullOrEmpty(node.Name) == false)
                     {
-                        var found = FindNodeByName(node.Name);
+                        var found = Factory.FindNodeByName(node.Name);
                         found.Data = ((ExpandoObject)found.Data).Merge((ExpandoObject)node.Data);
                         node = found;
                     }
@@ -42,7 +42,7 @@ namespace Logic
             };
         }
 
-        private static async Task Process(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Node> onError, Action<Node> onEnd)
+        private static async Task Process(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<Node, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
             try
             { 
@@ -90,7 +90,7 @@ namespace Logic
 
                         if (n.ReturnResults)
                         {
-                            await onResult(JsonConvert.SerializeObject(n.Results));
+                            await onResult(n);
                         }
 
                         if (n.NextNode != null)
@@ -114,9 +114,9 @@ namespace Logic
             }
         }
 
-        private static async Task Next(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<string, Task> onResult, Action<Node> onError, Action<Node> onEnd)
+        private static async Task Next(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<Node, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
-            var newNode = FindNodeByName(node.NextNode);
+            var newNode = Factory.FindNodeByName(node.NextNode);
             newNode.LastResults = new List<object>(node.Results);
             newNode.Data = ((ExpandoObject)node.Data).Merge((ExpandoObject)newNode.Data);
 
@@ -128,11 +128,6 @@ namespace Logic
             {
                 await Process(newNode, onStart, onNavigate, onEvaluate, onNext, onResult, onError, onEnd);
             }
-        }
-
-        private static Node FindNodeByName(string name)
-        {
-            return Nodes.First(n => n.Name == name).Clone();
         }
     }
 }

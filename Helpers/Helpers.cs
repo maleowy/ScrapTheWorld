@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Logic
+namespace Helpers
 {
     public static class Helpers
     {
@@ -30,11 +29,6 @@ namespace Logic
                 action.Invoke();
             }
             catch { }
-        }
-
-        public static string GetCurrentTime()
-        {
-            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
         }
 
         public static string GetLocalIPAddress()

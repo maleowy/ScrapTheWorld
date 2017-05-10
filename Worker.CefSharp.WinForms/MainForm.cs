@@ -56,7 +56,7 @@ namespace Worker.CefSharp.WinForms
                 url => Task.FromResult(Browser.LoadPage(url)),
                 script => Task.FromResult(Browser.EvaluateScriptWithReturn(script)),
                 async node => await Bus.PublishAsync(node),
-                async result => await Bus.PublishAsync(new Result { Data = result }),
+                async node => await Bus.PublishAsync(new Result { Node = node }),
                 async node =>
                 {
                     Logger.Error("{@Node}", node);

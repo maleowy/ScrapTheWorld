@@ -9,6 +9,7 @@ using EasyNetQ;
 using Extensions;
 using Logic;
 using Models;
+using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
 using static Logic.Logic;
@@ -39,7 +40,7 @@ namespace Worker.CefSharp.OffScreen
                 url => Task.FromResult(Browser.LoadPage(url)),
                 script => Task.FromResult(Browser.EvaluateScriptWithReturn(script)),
                 async node => await Bus.PublishAsync(node),
-                async result => await Bus.PublishAsync(new Result {Data = result}),
+                async node => await Bus.PublishAsync(new Result { Node = node }),
                 async node =>
                 {
                     Logger.Error("{@Node}", node);
@@ -70,7 +71,7 @@ namespace Worker.CefSharp.OffScreen
             Bus.Publish(Factory.GetTitleNode("http://www.onet.pl"));
             Bus.Publish(Factory.GetTitleNode("http://www.interia.pl"));
 
-            Bus.Subscribe<Result>("subscriptionId", x => Console.WriteLine(x.Data));
+            Bus.Subscribe<Result>("subscriptionId", x => Logger.Information(JsonConvert.SerializeObject(x.Node.Results)));
         }
 
         private static void InitializeChromium()

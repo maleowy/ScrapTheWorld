@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Sprache", "Tests.Spra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{065068DC-4E90-485F-A7B5-A87C98CDC485}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{FC57D9A0-1355-4578-ADBD-9DC8947CD320}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -189,6 +191,18 @@ Global
 		{065068DC-4E90-485F-A7B5-A87C98CDC485}.Release|x64.Build.0 = Release|Any CPU
 		{065068DC-4E90-485F-A7B5-A87C98CDC485}.Release|x86.ActiveCfg = Release|Any CPU
 		{065068DC-4E90-485F-A7B5-A87C98CDC485}.Release|x86.Build.0 = Release|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Debug|x64.Build.0 = Debug|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Debug|x86.Build.0 = Debug|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x64.Build.0 = Release|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -64,7 +64,9 @@ namespace Persistence
         public HttpResponseMessage Get()
         {
             var indexPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html");
-            var response = new HttpResponseMessage { Content = new StringContent(File.ReadAllText(indexPath)) };
+            var indexHtml = File.ReadAllText(indexPath).Replace("localhost:8081", $"{Program.IP}:{Program.Port}").Replace("table=test", $"table={Program.Table}");
+
+            var response = new HttpResponseMessage { Content = new StringContent(indexHtml) };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
 
             return response;

@@ -10,7 +10,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using static Logic.Logic;
-using static Logic.Helpers;
+using static Helpers.Helpers;
 
 namespace Worker.RemoteDebugging
 {
@@ -67,7 +67,7 @@ namespace Worker.RemoteDebugging
                     }
                 },
                 async node => await Bus.PublishAsync(node),
-                async result => await Bus.PublishAsync(new Result { Data = result }),
+                async node => await Bus.PublishAsync(new Result { Node = node }),
                 async node =>
                 {
                     Logger.Error("{@Node}", node);

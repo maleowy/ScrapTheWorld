@@ -4,16 +4,21 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using System.Web.Http.SelfHost;
 using Swashbuckle.Application;
+using static Helpers.Helpers;
 
 namespace Persistence
 {
     class Program
     {
+        public static readonly string IP = GetLocalIPAddress();
+        public static readonly int Port = 8081;
+        public static readonly string Table = "test";
+
         static void Main(string[] args)
         {
             Console.Title = "Persistence";
 
-            var url = "http://localhost:8081";
+            var url = $"http://{IP}:{Port}";
             var config = new HttpSelfHostConfiguration(url);
 
             config.Routes.MapHttpRoute(
