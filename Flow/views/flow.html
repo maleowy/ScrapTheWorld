@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html>
+<head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">    
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <title>Flow</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" rel="stylesheet"/>
+    <link href="../Content/jquery.flowchart.min.css" rel="stylesheet"/>
+	
+	<!--Import Google Icon Font-->
+      <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	
+	<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+	
+    <link href="../Content/flow.css" rel="stylesheet" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" type="image/png" href="http://iconshow.me/media/images/Mixed/line-icon/png/256/world-256.png" />
+</head>
+ <body>
+
+
+ <div class="header">   
+	
+	<!-- Dropdown Trigger -->
+	<a class='dropdown-button btn blue' href='#' data-activates='menu'>Menu</a>
+
+	<!-- Dropdown Structure -->
+	<ul id='menu' class='dropdown-content'>
+		<li><a href="#" onclick="openLoadFlowModal()">load</a></li>
+		<li><a href="#" onclick="fromJson($('#json').val())">from json</a></li>
+		<li><a href="#" onclick="toJson()">to json</a></li>
+		<li><a href="#" onclick="openSaveFlowModal()">save</a></li>
+		<li><a href="#" onclick="add()"><span class="new badge blue" data-badge-caption="">+</span>add</a></li>
+		<li><a href="#" onclick="deleteSelected()"><span class="new badge blue" data-badge-caption="">del</span>delete</a></li>
+	</ul>
+  
+	<div id="flowModal" class="modal">
+		<div class="modal-content">
+
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="flowName" type="text"></input>
+					<label for="flowName">Flow name</label>
+				</div>
+			</div>
+			
+			<a id="load" href="#" class="modal-action modal-close waves-effect waves-blue btn blue" onclick="load()">Load</a>
+			<a id="save" href="#" class="modal-action modal-close waves-effect waves-blue btn blue" onclick="save()">Save</a>
+		  
+		</div>
+	</div>
+  
+	<input id="port" type="hidden" value="8081" />
+
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="open Url &quot;http://www.duckduckgo.com&quot;">Open</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="fill QuerySelector &quot;#search_form_input_homepage&quot; Value &quot;Test&quot;">Fill</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="click QuerySelector &quot;#search_button_homepage&quot;">Click</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="wait 1000">Wait</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="urls">Urls</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="limit Limit &quot;3&quot;">Limit</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="split Limit &quot;1&quot;">Split</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="set From &quot;self.LastResults[0]&quot; To &quot;Url&quot;">Set</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="worker open">Worker open</div>
+	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="title return">Title return</div>
+
+</div>
+ 
+
+<div id="chart_container">
+    <div class="flowchart-example-container flowchart-container" id="chart"></div>
+</div>
+
+
+<!--<div class="row section">
+	<div class="col">
+		<a id="modalTrigger" class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a>  
+	</div>
+</div>-->
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal bottom-sheet">
+    <div class="modal-content dark">
+	  
+		<div id="operator_properties">
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="operator_title" type="text"></input>
+					<label for="operator_title">Operator</label>
+				</div>
+			</div>			
+			<div class="row">
+				<div class="input-field col s12">
+					<textarea id="operator_data" class="materialize-textarea"></textarea>
+					<label for="operator_data">Commands</label>
+				</div>
+			</div>
+		</div>  
+	  	 	
+		<div id="link_properties">
+			<label for="link_color">Link's color</label>
+			<input type="color" id="link_color">
+		</div>
+
+    </div>
+</div>
+
+
+<ul class="collapsible" data-collapsible="accordion">
+    <li>
+		<div class="collapsible-header">JSON</div>
+		<div class="collapsible-body">  
+			<div class="row">
+				<div class="input-field col s12">
+					<textarea id="json" class="materialize-textarea"></textarea>
+				</div>
+			</div>
+		</div>
+    </li>
+</ul>
+
+<!--<div class="flowchart-example-event" id="events_container">Last events: <pre id="events"></pre></div>-->
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.panzoom/3.2.2/jquery.panzoom.min.js"></script>
+
+<script src="../Scripts/jquery.flowchart_tweaked.js"></script>
+<script src="../Scripts/flow.js"></script>
+
+</body>
+</html>

@@ -59,12 +59,13 @@ namespace Frontend
             });
 
             Console.Clear();
+            Console.WriteLine($"http://{IP}:{Port}");
+            Console.WriteLine();
             Console.WriteLine("o - offscreen, f - winforms, w - wpf, s - selenium, r - remote debugging, p - publish, 1 - flow, 2 - flow, esc - exit");
 
             var workers = new List<Process>();
 
             var url = $"http://+:{Port}";
-            Console.Title += $" - http://{IP}:{Port}";
 
 
             using (WebApp.Start<Startup>(url))

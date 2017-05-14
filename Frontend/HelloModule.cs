@@ -8,6 +8,8 @@ namespace Frontend
         {
             Get["/"] = o => View["index"];
 
+            Get["/flow"] = o => View["flow"];
+
             Get["/test"] = o =>
             {
                 HelloHub.ReturnResults(null, "test", "info_outline");

@@ -1,0 +1,100 @@
+
+/* header */
+
+.header {
+	margin-top:10px; 
+	margin-bottom:10px;
+}
+
+#menu {
+	width: 150px !important;
+}
+
+#menu > li > a {
+	text-transform: uppercase;
+	color: #2196F3;
+}
+
+/* flowchart */
+
+#chart {
+	height: 80vh;
+	border: 1px solid #BBB;
+	margin-bottom: 1px;
+	margin-right: 1px;
+}
+
+/* node */
+
+.flowchart-operator {
+	width: 200px;
+	cursor: pointer;
+}
+
+.flowchart-operator.selected {
+	border-color: grey;
+	border-width: 2px;
+}
+
+.draggable_operator {
+	cursor: move;
+}
+
+.flowchart-operator-connector-arrow,
+path,
+#link_color {
+	cursor: pointer;
+}
+
+.commands {
+	white-space: pre;
+	font-size:14px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 200px;
+}
+
+/* edit */
+
+.dark {
+	background-color: rgb(48,48,48);
+}
+
+#operator_properties {
+	color: white; 
+	display: none;
+}
+
+#link_properties {
+	color: white; 
+	height: 100px; 
+	display: none;
+}
+
+#link_color {
+	display: block;
+	width: 100px; 
+	height: 50px;
+}
+
+/* inputs underline */
+
+.input-field input[type=text]:focus {
+	border-bottom: 1px solid #2196F3;
+	box-shadow: 0 1px 0 0 #2196F3;
+}
+
+.input-field input[type=text]:focus + label {
+	color: #2196F3;
+}
+   		
+#operator_data:focus, 
+#json:focus {
+	border-bottom: 1px solid #2196F3;
+	box-shadow: 0 1px 0 0 #2196F3;
+}
+
+#operator_data:focus + label, 
+#json:focus + label {
+	color: #2196F3;
+}

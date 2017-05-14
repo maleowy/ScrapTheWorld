@@ -19,6 +19,46 @@ namespace Logic
 
         public static Dictionary<string, string> Scripts = Factory.GetScripts();
 
+        public static List<Node> GetNodes(string json)
+        {
+            dynamic jsonObj = JsonConvert.DeserializeObject(json);
+
+            if (jsonObj == null)
+            {
+                return new List<Node>();
+            }
+
+            var nodesDictionary = new Dictionary<string, List<Node>>();
+
+            foreach (dynamic node in jsonObj.operators ?? new List<dynamic>())
+            {
+                string id = node.Name.ToString();
+                var title = node.First.properties.title.ToString();
+                var commands = node.First.properties.commands.ToString();
+
+                var nodes = NodesParser.ParseString(title, commands);
+                nodesDictionary.Add(id, nodes);
+            }
+
+            foreach (dynamic node in jsonObj.links ?? new List<dynamic>())
+            {
+                string fromId = node.First.fromOperator.ToString();
+                string toId = node.First.toOperator.ToString();
+
+                if (fromId == toId)
+                    continue;
+
+                var last = nodesDictionary[fromId].LastOrDefault();
+
+                if (last != null)
+                {
+                    last.NextNode = nodesDictionary[toId].FirstOrDefault()?.Name;
+                }
+            }
+
+            return nodesDictionary.SelectMany(x => x.Value).ToList();
+        }
+
         public static Func<Node, Task> GetLogic(Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<Node, Task> onResult, Action<Node> onError, Action<Node> onEnd)
         {
             return async node =>

@@ -250,3 +250,8 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+/Frontend/Content/flow.css
+/Frontend/Content/jquery.flowchart.min.css
+/Frontend/Scripts/flow.js
+/Frontend/Scripts/jquery.flowchart_tweaked.js
+/Frontend/views/flow.html

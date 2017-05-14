@@ -20,6 +20,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.EasyNetQ", "Tests.EasyNetQ\Tests.EasyNetQ.csproj", "{0D03BAC1-1107-42E6-BF37-8E4DF9FAB184}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{5F24D2A6-24EB-4F10-9F31-384B24073003}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B} = {DB6B4081-1116-4D29-8529-1F74BD4C372B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Worker.Selenium", "Worker.Selenium\Worker.Selenium.csproj", "{41A7E793-78A0-4DF8-BB85-48CF584BD42D}"
 EndProject
@@ -30,6 +33,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{065068DC-4E90-485F-A7B5-A87C98CDC485}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{FC57D9A0-1355-4578-ADBD-9DC8947CD320}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flow", "Flow\Flow.csproj", "{DB6B4081-1116-4D29-8529-1F74BD4C372B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -203,6 +208,18 @@ Global
 		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x64.Build.0 = Release|Any CPU
 		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC57D9A0-1355-4578-ADBD-9DC8947CD320}.Release|x86.Build.0 = Release|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Debug|x64.Build.0 = Debug|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Release|x64.ActiveCfg = Release|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Release|x64.Build.0 = Release|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB6B4081-1116-4D29-8529-1F74BD4C372B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

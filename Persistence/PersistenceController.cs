@@ -22,6 +22,16 @@ namespace Persistence
             }
         }
 
+        [HttpGet]
+        public KeyValue Get(string table, string key)
+        {
+            using (var db = new LiteDatabase(DbName))
+            {
+                var collection = db.GetCollection<KeyValue>(table);
+                return collection.FindById(key);
+            }
+        }
+
         [HttpPost]
         public void Post(string table, string key, [FromBody]string value)
         {
@@ -30,7 +40,18 @@ namespace Persistence
             using (var db = new LiteDatabase(DbName))
             {
                 var collection = db.GetCollection<KeyValue>(table);
-                collection.Insert(new KeyValue { Key = key, Value = value ?? content });
+
+                KeyValue fromDb = collection.FindById(key);
+
+                if (fromDb == null)
+                {
+                    collection.Insert(new KeyValue {Key = key, Value = value ?? content});
+                }
+                else
+                {
+                    fromDb.Value = value ?? content;
+                    collection.Update(fromDb);
+                }
             }
         }
 
