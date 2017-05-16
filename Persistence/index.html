@@ -1,7 +1,7 @@
 ﻿<html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Scrap The World</title>
+    <title>Scripts</title>
 
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
@@ -10,7 +10,7 @@
     <link rel="shortcut icon" type="image/png" href="http://iconshow.me/media/images/Mixed/line-icon/png/256/world-256.png" />
 </head>
 <body ng-controller="AppCtrl" ng-app="MyApp">
-
+    
 
 <form layout layout-align="center" layout-padding>
     <div layout="row" flex>
@@ -68,13 +68,13 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 
 <script type="text/javascript">
-    
+
     var app = angular.module('MyApp', ['ngMaterial'])
 	.config(function($mdThemingProvider) {
 
 		$mdThemingProvider.theme('default')
 		.primaryPalette('blue');
-	
+
 		$mdThemingProvider.theme('docs-dark')
 		  .primaryPalette('blue')
 		  .dark();
@@ -82,48 +82,48 @@
 	})
     .controller('AppCtrl', ['$scope', '$http', function ($scope, $http) {
 
-        $scope.url = 'http://localhost:8081/api/Persistence?table=test';
+        $scope.url = '@Model.Url';
         $scope.scripts = [];
 		$scope.selected = null;
-		
+
 		$scope.select = function(item) {
 			$scope.selected = { Key: item.Key, Value: item.Value };
 		}
-		
+
         $scope.load = function() {
 			$http.get($scope.url).then(function(response) {
 				$scope.scripts = response.data;
 			});
 		}
-		
+
 		$scope.exists = function(key) {
 			if (_.findWhere($scope.scripts, { Key: key }))
 				return true;
-				
+
 			return false;
 		}
-		
+
 		$scope.save = function() {
-					
+
 			if ($scope.exists($scope.selected.Key)) {
 				$http.put($scope.url + '&key=' + $scope.selected.Key, $scope.selected.Value).then(function(response) {
 					$scope.load();
 				});
 			}
-			else 
+			else
 			{
 				$http.post($scope.url + '&key=' + $scope.selected.Key, $scope.selected.Value).then(function(response) {
 					$scope.load();
 				});
 			}
 		}
-		
+
 		$scope.delete = function() {
 			$http.delete($scope.url + '&key=' + $scope.selected.Key).then(function(response) {
 				$scope.load();
 			});
 		}
-		
+
 		$scope.load();
     }]);
 
