@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
+using System.Linq;
 using Logic;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Models;
+using RestSharp;
+using static Logic.Logic;
 
 namespace Frontend
 {
@@ -17,7 +19,7 @@ namespace Frontend
         {
             var arr = message.Split(' ');
 
-            if (arr.Length == 0)
+            if (arr.Length == 0 || !arr[0].Contains("/"))
                 return;
 
             var node = new Node();
@@ -25,30 +27,60 @@ namespace Frontend
             var connectionId = Context.ConnectionId;
             var token = Context.QueryString.Get("token");
 
-            node.Data = new { Guid = connectionId };
-
             try
             {
-                node = Factory.FindNodeByName(arr[0]);
+                var req = PrepareRequest(arr, node, connectionId);
 
-                var args = new Dictionary<string, object> {
-                    { "Guid", connectionId }
-                };
+                if (node.Nodes.Count == 0 || !node.Nodes.Any(n => arr[0].Contains(n.Name)))
+                    return;
 
-                for (int i = 1; i < arr.Length - 1; i = i + 2)
-                {
-                    args.Add(arr[i], arr[i + 1]);
-                }
-
-                node.Data = ((ExpandoObject)node.Data).Merge(args.ToExpando());
-
-                Program.Bus.Publish(node);
+                Program.Bus.Publish(req);
             }
             catch (Exception ex)
             {
                 node.Error = ex.Message;
                 Program.Bus.Publish(new ErrorResult { Node = node });
             }
+        }
+
+        private static Node PrepareRequest(string[] arr, Node node, string connectionId)
+        {
+            var tmp = arr[0].Split('/');
+
+            var flow = tmp[0];
+            node.Name = tmp[1];
+
+            var args = new Dictionary<string, object> {
+                { "Guid", connectionId }
+            };
+
+            for (int i = 1; i < arr.Length - 1; i = i + 2)
+            {
+                args.Add(arr[i], arr[i + 1]);
+            }
+
+            node.Data = args.ToExpando();
+
+            var client = new RestClient("http://localhost:8081");
+            var req = new RestRequest("/api/Persistence?table=scripts");
+
+            node.Scripts = new Dictionary<string, string>();
+
+            foreach (var item in client.Execute<dynamic>(req).Data)
+            {
+                node.Scripts.Add(item["Key"], item["Value"]);
+            }
+
+            req = new RestRequest("/api/Persistence?table=flows&key=" + flow);
+
+            var data = client.Execute<dynamic>(req).Data;
+            var json = data?["Value"] ?? "{}";
+            node.Nodes = GetNodes(json);
+
+            var flowScripts = node.Nodes.Select(n => n.Script).ToArray();
+            node.Scripts = node.Scripts.Where(kvp => flowScripts.Contains(kvp.Key)).ToDictionary(i => i.Key, i => i.Value);
+
+            return node;
         }
 
         public static void ReturnResults(string connectionId, string data, string image)

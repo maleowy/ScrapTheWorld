@@ -15,10 +15,6 @@ namespace Logic
             return "host=localhost;username=guest;password=guest;timeout=60;prefetchcount=1";
         }
 
-        public static List<Node> Nodes = Factory.GetNodes();
-
-        public static Dictionary<string, string> Scripts = Factory.GetScripts();
-
         public static List<Node> GetNodes(string json)
         {
             dynamic jsonObj = JsonConvert.DeserializeObject(json);
@@ -65,6 +61,8 @@ namespace Logic
             {
                 try
                 {
+                    UpdateFlow(node);
+
                     if (node.NextWorker == false && string.IsNullOrEmpty(node.Name) == false)
                     {
                         var found = Factory.FindNodeByName(node.Name);
@@ -80,6 +78,21 @@ namespace Logic
                     onError(node);
                 }
             };
+        }
+
+        private static void UpdateFlow(Node node)
+        {
+            if ((node.Nodes ?? new List<Node>()).Any())
+            {
+                Factory.Nodes = node.Nodes.Clone();
+                node.Nodes = null;
+            }
+
+            if ((node.Scripts ?? new Dictionary<string, string>()).Any())
+            {
+                Factory.Scripts = node.Scripts.Clone();
+                node.Scripts = null;
+            }
         }
 
         private static async Task Process(Node node, Action<Node> onStart, Func<string, Task> onNavigate, Func<string, Task<string>> onEvaluate, Func<Node, Task> onNext, Func<Node, Task> onResult, Action<Node> onError, Action<Node> onEnd)
@@ -107,7 +120,7 @@ namespace Logic
                                     @"(function() { " +
                                     $"var self = {JsonConvert.SerializeObject(node)};" +
                                     "try { " +
-                                    $"{(Scripts.ContainsKey(node.Script) ? Scripts[node.Script] : node.Script)}" +
+                                    $"{(Factory.Scripts.ContainsKey(node.Script) ? Factory.Scripts[node.Script] : node.Script)}" +
                                     "} catch(err) {" +
                                     "self.Error = err.message;" +
                                     "self.NextNode = null;" +
@@ -162,6 +175,9 @@ namespace Logic
 
             if (newNode.NextWorker)
             {
+                newNode.Nodes = Factory.Nodes;
+                newNode.Scripts = Factory.Scripts;
+
                 await onNext(newNode);
             }
             else

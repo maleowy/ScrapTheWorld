@@ -20,6 +20,9 @@ namespace Models
         public List<object> Results { get; set; }
         public string Error { get; set; }
 
+        public List<Node> Nodes { get; set; }
+        public Dictionary<string, string> Scripts { get; set; }
+
         public Node()
         {
             Data = new ExpandoObject();

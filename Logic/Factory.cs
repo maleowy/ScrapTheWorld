@@ -31,21 +31,11 @@ namespace Logic
             { "fill", @"document.querySelector(self.Data.QuerySelector).value = self.Data.Value;" },
             { "click", "document.querySelector(self.Data.QuerySelector).click();" },
             { "title", @"self.Results = [document.title];" },
-            { "split", "var arr = []; if (self.LastResults && self.LastResults.length > 0) { var stringified = JSON.stringify(self); for(var i=0; i < self.LastResults.length; i = i + self.Data.Limit) { var m = JSON.parse(stringified); m.LastResults = []; m.Results = []; for (var j=i; j < i + self.Data.Limit && j < self.LastResults.length; j++) { m.Results.push(self.LastResults[j]); } arr.push(m); } } return JSON.stringify(arr);" },
-            { "limit", "var results = []; if (self.LastResults && self.LastResults.length > self.Data.Limit) { for(var i=0; i < self.Data.Limit; i++) { results.push(self.LastResults[i]); } } self.LastResults = []; self.Results = results;" },
+            { "split", "var arr = []; if (self.LastResults && self.LastResults.length > 0) { var stringified = JSON.stringify(self); for(var i=0; i < self.LastResults.length; i = i + parseInt(self.Data.Limit)) { var m = JSON.parse(stringified); m.LastResults = []; m.Results = []; for (var j=i; j < i + parseInt(self.Data.Limit) && j < self.LastResults.length; j++) { m.Results.push(self.LastResults[j]); } arr.push(m); } } return JSON.stringify(arr);" },
+            { "limit", "var results = []; if (self.LastResults && self.LastResults.length > parseInt(self.Data.Limit)) { for(var i=0; i < parseInt(self.Data.Limit); i++) { results.push(self.LastResults[i]); } } self.LastResults = []; self.Results = results;" },
             { "urls", @"var urls = []; document.body.innerText.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g).forEach(function(element) { if (urls.indexOf(element) == -1) { urls.push(element) } }); var results = []; urls.forEach(function(element) { results.push(element); }); self.Results = results;" },
             { "set", @"self.Data[self.Data.To] = eval(self.Data.From);" }
         };
-
-        public static List<Node> GetNodes()
-        {
-            return Nodes;
-        }
-
-        public static Dictionary<string, string> GetScripts()
-        {
-            return Scripts;
-        }
 
         public static Node FindNodeByName(string name)
         {

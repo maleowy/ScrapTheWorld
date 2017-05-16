@@ -69,7 +69,16 @@
 	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="split Limit &quot;1&quot;">Split</div>
 	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="set From &quot;self.LastResults[0]&quot; To &quot;Url&quot;">Set</div>
 	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="worker open">Worker open</div>
-	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="title return">Title return</div>
+    <div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="title return">Title return</div>
+    <div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="open Url &quot;https://duckduckgo.com/&quot;
+fill QuerySelector &quot;#search_form_input_homepage&quot; Value &quot;Test&quot;
+click QuerySelector &quot;#search_button_homepage&quot;
+urls
+limit Limit &quot;3&quot;
+split Limit &quot;1&quot;
+set From &quot;self.LastResults[0]&quot; To &quot;Url&quot;
+worker open
+title return">All</div>
 
 </div>
  
