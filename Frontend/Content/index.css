@@ -1,5 +1,5 @@
 .bg {
-    width: 50%; 
+    width: 40%; 
     display: block; 
     margin-left: auto; 
     margin-right: auto;
@@ -17,5 +17,5 @@
 }
 
 .search {
-    max-width: 80%;
+    max-width: 70%;
 }

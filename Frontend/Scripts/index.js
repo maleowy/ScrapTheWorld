@@ -15,6 +15,10 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
         HelloHubFactory.search($scope.searchText);
     }
 
+    $scope.clear = function () {
+        $scope.results = [];
+    }
+
     $scope.getConnectionId = function() {
         return HelloHubFactory.getConnectionId();
     }

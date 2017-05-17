@@ -21,7 +21,7 @@
     <div layout="row" class="search" flex>
         <md-input-container flex class="md-icon-float md-block md-title">
             <label>Search...</label>
-            <input type="text" ng-model="searchText" my-enter="search(searchText)" placeholder="flow/node key1 value1 key2 value2..." />
+            <input type="text" ng-model="searchText" my-enter="search(searchText)" placeholder="flow/node key1 value1 key2 value2..."/>
         </md-input-container>
         <div>
             <md-button class="md-raised" ng-click="search()">
@@ -30,6 +30,13 @@
         </div>
     </div>
 </form>
+
+<div layout="row" flex>
+    <md-button class="md-raised" ng-click="clear()">
+        <md-icon class="material-icons">clear</md-icon>
+        Clear
+    </md-button>
+</div>
 
 <div ng-cloak="">
     <md-content>
