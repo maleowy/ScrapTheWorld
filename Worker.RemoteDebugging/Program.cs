@@ -25,7 +25,7 @@ namespace Worker.RemoteDebugging
             Console.Title = "Worker Remote Debugging";
 
             var dir = AppDomain.CurrentDomain.BaseDirectory;
-            dir = Path.GetFullPath(Path.Combine(dir, @"..\..\..\..\"));
+            dir = Path.GetFullPath(Path.Combine(dir, @"..\..\..\"));
 
             Process.Start(Path.Combine(dir, @"GoogleChromePortable\GoogleChromePortable.exe"), "--remote-debugging-port=9222 about:blank");
 

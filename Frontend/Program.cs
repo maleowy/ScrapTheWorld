@@ -122,9 +122,9 @@ namespace Frontend
         private static void PreparePaths()
         {
             Dir = AppDomain.CurrentDomain.BaseDirectory;
-            Dir = Path.GetFullPath(Path.Combine(Dir, @"..\..\..\..\"));
+            Dir = Path.GetFullPath(Path.Combine(Dir, @"..\..\..\"));
 
-            WorkerDir = Path.Combine(Dir, @"Worker.{0}\bin\x86\Debug");
+            WorkerDir = Path.Combine(Dir, @"Worker.{0}\bin\" + (Debugger.IsAttached ? "Debug" : "Release"));
             WorkerExe = Path.Combine(WorkerDir, @"Worker.{0}.exe");
         }
 
@@ -158,7 +158,7 @@ namespace Frontend
         {
             if (Directory.Exists(Path.Combine(Dir, @"Persistence")))
             {
-                var persistencePath = Path.Combine(Dir, @"Persistence\bin\Debug\Persistence.exe");
+                var persistencePath = Path.Combine(Dir, $@"Persistence\bin\{(Debugger.IsAttached ? "Debug" : "Release")}\Persistence.exe");
 
                 if (File.Exists(persistencePath))
                 {

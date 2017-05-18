@@ -30,7 +30,7 @@ namespace Worker.Selenium
                 .CreateLogger();
 
             var dir = AppDomain.CurrentDomain.BaseDirectory;
-            dir = Path.GetFullPath(Path.Combine(dir, @"..\..\..\..\"));
+            dir = Path.GetFullPath(Path.Combine(dir, @"..\..\..\"));
 
             var chromePortable = Path.Combine(dir, @"GoogleChromePortable\GoogleChromePortable.exe");
 
