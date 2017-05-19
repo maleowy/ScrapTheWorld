@@ -12,7 +12,7 @@ namespace Persistence
     {
         public static readonly string IP = GetLocalIPAddress();
         public static readonly int Port = 8081;
-        public static readonly string Table = "test";
+        public static readonly string Table = "scripts";
 
         static void Main(string[] args)
         {

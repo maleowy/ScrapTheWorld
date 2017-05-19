@@ -10,7 +10,7 @@ namespace Persistence
 {
     public class PersistenceController : ApiController
     {
-        private static readonly string DbName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DB.db");
+        private static readonly string DbName = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\DB.db"));
 
         [HttpGet]
         public IEnumerable<KeyValue> Get(string table)
