@@ -168,6 +168,12 @@
       <Project>{27bcdd5e-92bc-43c4-848d-3bdcafae96f0}</Project>
       <Name>Models</Name>
     </ProjectReference>
+	<ProjectReference Include="..\Flow\Flow.csproj">
+	  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+	</ProjectReference>
+	<ProjectReference Include="..\Persistence\Persistence.csproj">
+	  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+	</ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\flow.css">
