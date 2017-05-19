@@ -12,6 +12,37 @@
 </head>
 <body>
 
+<md-menu>
+    <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+        <md-icon class="material-icons">menu</md-icon>
+    </md-button>
+    <md-menu-content width="4">
+        <md-menu-item>
+            <md-button ng-click="flow()">
+                <md-icon class="material-icons">dashboard</md-icon>
+                Flow
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="scripts()">
+                <md-icon class="material-icons">code</md-icon>
+                Scripts
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-button ng-click="clear()">
+                <md-icon class="material-icons">clear</md-icon>
+                Clear
+            </md-button>
+        </md-menu-item>
+        <md-menu-item>
+            <md-switch ng-model="data.notify" aria-label="Notify" class="md-warn switch">
+                Notify
+            </md-switch>
+        </md-menu-item>
+    </md-menu-content>
+</md-menu>
+
 <div class="center">
     <img src="../content/world.jpg" class="bg" />
     <a href="http://www.freepik.com/free-vector/polygonal-earth_794390.htm" class="credit">Designed by Freepik</a>
@@ -21,7 +52,7 @@
     <div layout="row" class="search" flex>
         <md-input-container flex class="md-icon-float md-block md-title">
             <label>Search...</label>
-            <input type="text" ng-model="searchText" my-enter="search(searchText)" placeholder="flow/node key1 value1 key2 value2..."/>
+            <input type="text" ng-model="data.searchText" my-enter="search(searchText)" placeholder="flow/node key1 value1 key2 value2..."/>
         </md-input-container>
         <div>
             <md-button class="md-raised" ng-click="search()">
@@ -31,12 +62,6 @@
     </div>
 </form>
 
-<div layout="row" flex>
-    <md-button class="md-raised" ng-click="clear()">
-        <md-icon class="material-icons">clear</md-icon>
-        Clear
-    </md-button>
-</div>
 
 <div ng-cloak="">
     <md-content>

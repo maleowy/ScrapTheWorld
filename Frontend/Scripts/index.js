@@ -1,4 +1,30 @@
-﻿
+﻿// request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+    if (!Notification) {
+        alert('Desktop notifications not available in your browser. Try Chromium.');
+        return;
+    }
+
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+});
+
+function notifyMe() {
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+    else {
+        var notification = new Notification('Scrap The World', {
+            icon: 'http://iconshow.me/media/images/Mixed/line-icon/png/256/world-256.png',
+            body: "New results found!"
+        });
+
+        notification.onclick = function () {
+
+        };
+    }
+}
+
+
 var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
     .config(function ($mdThemingProvider) {
 
@@ -6,13 +32,32 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
 		.primaryPalette('blue');
 
     })
-    .controller('AppCtrl', ['$scope', '$http', 'HelloHubFactory', function ($scope, $http, HelloHubFactory) {
+    .controller('AppCtrl', ['$scope', '$http', '$window', '$mdDialog', 'HelloHubFactory', function ($scope, $http, $window, $mdDialog, HelloHubFactory) {
 
-    $scope.searchText = null;
-    $scope.results = [];
+    var originatorEv;
+
+    $scope.openMenu = function ($mdOpenMenu, ev) {
+        originatorEv = ev;
+        $mdOpenMenu(ev);
+    };
+
+	$scope.data = {
+	    searchText: null,
+	    notify: false
+	};
+
+	$scope.results = [];
 
     $scope.search = function () {
-        HelloHubFactory.search($scope.searchText);
+        HelloHubFactory.search($scope.data.searchText);
+    }
+
+    $scope.flow = function () {
+        $window.open('/flow');
+    }
+
+    $scope.scripts = function () {
+        $window.open('/scripts');
     }
 
     $scope.clear = function () {
@@ -25,6 +70,9 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
 
     $scope.$on('topic', function (event, arg) {
         $scope.results.unshift(arg);
+        if ($scope.data.notify) {
+            notifyMe();
+        }
     });
 }]);
 

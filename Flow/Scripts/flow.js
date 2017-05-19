@@ -327,5 +327,17 @@ $(function() {
 	draggable();
  
 	$('#flowName').val('test');
+	$('#flowName').keydown(function (e) {
+	    if (e.keyCode == 13) {
+	        if ($('#save').is(':visible')) {
+	            save();
+	        } else {
+	            load();
+	        }
+
+	        $('#flowModal').closeModal();
+	    }
+	});
+
 	load();	
 });
