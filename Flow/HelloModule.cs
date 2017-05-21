@@ -6,7 +6,13 @@ namespace Flow
     {
         public HelloModule()
         {
-            Get["/"] = o => View["flow"];
+            Get["/"] = o =>
+            {
+                dynamic viewBag = new DynamicDictionary();
+                viewBag.PersistencePort = Program.PersistencePort;
+
+                return View["flow", viewBag];
+            };
         }
     }
 }

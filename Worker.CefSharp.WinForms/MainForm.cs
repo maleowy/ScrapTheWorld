@@ -14,6 +14,7 @@ using Models;
 using Serilog;
 using Serilog.Core;
 using static Logic.Logic;
+using static Helpers.Helpers;
 
 namespace Worker.CefSharp.WinForms
 {
@@ -30,7 +31,7 @@ namespace Worker.CefSharp.WinForms
 
             Text = "Worker CefSharp WinForms";
 
-            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration(FindRabbit()));
 
             Logger = new LoggerConfiguration()
                 .WriteTo.RollingFile("log.txt", retainedFileCountLimit: 7)

@@ -12,6 +12,7 @@ using Models;
 using Serilog;
 using Serilog.Core;
 using static Logic.Logic;
+using static Helpers.Helpers;
 
 namespace Worker.CefSharp.WPF
 {
@@ -28,7 +29,7 @@ namespace Worker.CefSharp.WPF
 
             InitializeComponent();
 
-            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration(FindRabbit()));
 
             Logger = new LoggerConfiguration()
                 .WriteTo.RollingFile("log.txt", retainedFileCountLimit: 7)

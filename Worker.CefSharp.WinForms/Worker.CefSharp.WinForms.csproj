@@ -137,6 +137,10 @@
       <Project>{f229c47d-c860-48bc-a02d-efb79b9795dd}</Project>
       <Name>Extensions</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{fc57d9a0-1355-4578-adbd-9dc8947cd320}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logic\Logic.csproj">
       <Project>{adcf7bdc-f837-49a1-8c00-1b3dcc69c0aa}</Project>
       <Name>Logic</Name>

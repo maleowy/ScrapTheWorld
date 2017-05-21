@@ -34,7 +34,7 @@ namespace Worker.RemoteDebugging
                 Thread.Sleep(1000);
             }
 
-            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration(FindRabbit()));
 
             Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole(LogEventLevel.Verbose, "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level}] {Message}{NewLine}{Exception}")

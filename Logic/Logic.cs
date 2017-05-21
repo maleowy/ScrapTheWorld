@@ -10,11 +10,6 @@ namespace Logic
 {
     public class Logic
     {
-        public static string GetBusConfiguration()
-        {
-            return "host=localhost;username=guest;password=guest;timeout=60;prefetchcount=1";
-        }
-
         public static List<Node> GetNodes(string json)
         {
             dynamic jsonObj = JsonConvert.DeserializeObject(json);

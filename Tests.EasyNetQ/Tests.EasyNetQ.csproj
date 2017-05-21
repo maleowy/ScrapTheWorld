@@ -62,6 +62,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Helpers\Helpers.csproj">
+      <Project>{fc57d9a0-1355-4578-adbd-9dc8947cd320}</Project>
+      <Name>Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{27BCDD5E-92BC-43C4-848D-3BDCAFAE96F0}</Project>
       <Name>Models</Name>

@@ -5,10 +5,11 @@ using EasyNetQ;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Models;
-using static Logic.Logic;
 using OpenQA.Selenium.Support.UI;
 using Serilog;
 using Serilog.Core;
+using static Logic.Logic;
+using static Helpers.Helpers;
 
 namespace Worker.Selenium
 {
@@ -22,7 +23,7 @@ namespace Worker.Selenium
         {
             Console.Title = "Worker Selenium";
 
-            Bus = RabbitHutch.CreateBus(GetBusConfiguration());
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration(FindRabbit()));
 
             Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()

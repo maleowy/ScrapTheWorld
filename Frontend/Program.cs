@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Logic;
 using Microsoft.Owin.Hosting;
 using Newtonsoft.Json;
+using Open.Nat;
 using Serilog;
 using Serilog.Core;
 using static Helpers.Helpers;
@@ -19,7 +20,13 @@ namespace Frontend
     {
         public static readonly string IP = GetLocalIPAddress();
         public static readonly int Port = 8080;
+        public static string ExternalIP;
+        public static readonly int ExternalPort = 80;
 
+        public static string RabbitIP = "localhost";
+        public static string PersistenceIP = "localhost";
+        public static readonly int PersistencePort = 8081;
+ 
         public static IBus Bus;
         public static Logger Logger;
 
@@ -32,12 +39,14 @@ namespace Frontend
             Console.Title = "Frontend";
             Console.WriteLine("Waiting for RabbitMQ...");
 
+            MapPorts().Wait();
+
             PreparePaths();
             AddChromePortable();
-            AddPersistence();
             AddRabbit();
+            AddPersistence();
 
-            Bus = RabbitHutch.CreateBus("host=localhost");
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration(RabbitIP, "guest", "guest", 50));
 
             Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
@@ -59,7 +68,8 @@ namespace Frontend
             });
 
             Console.Clear();
-            Console.WriteLine($"http://{IP}:{Port}");
+            Console.WriteLine($"Local - http://{IP}:{Port}");
+            Console.WriteLine($"Public - http://{ExternalIP}:{ExternalPort}");
             Console.WriteLine();
             Console.WriteLine("o - offscreen, f - winforms, w - wpf, s - selenium, r - remote debugging, p - publish, 1 - flow, 2 - flow, esc - exit");
 
@@ -119,6 +129,18 @@ namespace Frontend
             }
         }
 
+        private static async Task MapPorts()
+        {
+            var discoverer = new NatDiscoverer();
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+            var device = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+            ExternalIP = device.GetExternalIPAsync().Result.ToString();
+
+            await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, Port, ExternalPort, "Scrap The World"));
+            await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, PersistencePort, PersistencePort, "Persistence"));
+        }
+
         private static void PreparePaths()
         {
             Dir = AppDomain.CurrentDomain.BaseDirectory;
@@ -132,14 +154,21 @@ namespace Frontend
         {
             var erl = Process.GetProcessesByName("erl");
 
-            if (erl.Length == 0 && Directory.Exists(Path.Combine(Dir, @"RabbitMQ")))
+            if (erl.Length == 0)
             {
-                if (!Directory.Exists(Path.Combine(Dir, @"RabbitMQ\rabbitmq_server-3.6.6")))
+                try
                 {
-                    ExtractRabbit();
+                    RabbitIP = FindRabbit();
                 }
+                catch
+                {
+                    if (Directory.Exists(Path.Combine(Dir, @"RabbitMQ")) && !Directory.Exists(Path.Combine(Dir, @"RabbitMQ\rabbitmq_server-3.6.6")))
+                    {
+                        ExtractRabbit();
+                    }
 
-                StartRabbit();
+                    StartRabbit();
+                }
             }
         }
 
@@ -156,13 +185,25 @@ namespace Frontend
 
         private static void AddPersistence()
         {
-            if (Directory.Exists(Path.Combine(Dir, @"Persistence")))
-            {
-                var persistencePath = Path.Combine(Dir, $@"Persistence\bin\{(Debugger.IsAttached ? "Debug" : "Release")}\Persistence.exe");
+            var erl = Process.GetProcessesByName("Persistence");
 
-                if (File.Exists(persistencePath))
+            if (erl.Length == 0)
+            {
+                try
                 {
-                    Process.Start(persistencePath);
+                    PersistenceIP = FindServerInLocalNetwork(PersistencePort);
+                }
+                catch
+                {
+                    if (Directory.Exists(Path.Combine(Dir, @"Persistence")))
+                    {
+                        var persistencePath = Path.Combine(Dir, $@"Persistence\bin\{(Debugger.IsAttached ? "Debug" : "Release")}\Persistence.exe");
+
+                        if (File.Exists(persistencePath))
+                        {
+                            Process.Start(persistencePath);
+                        }
+                    }
                 }
             }
         }

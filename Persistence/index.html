@@ -82,7 +82,7 @@
 	})
     .controller('AppCtrl', ['$scope', '$http', function ($scope, $http) {
 
-        $scope.url = '@Model.Url';
+        $scope.url = 'http://' + window.location.hostname + ':@Model.PersistencePort/api/Persistence?table=@Model.Table';
         $scope.scripts = [];
 		$scope.selected = null;
 

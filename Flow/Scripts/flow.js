@@ -200,7 +200,7 @@ function load() {
 		return;
 	}
 
-    $.get('http://localhost:' + $('#port').val() + '/api/Persistence?table=flows&key=' + key, function (data) {
+    $.get('http://' + window.location.hostname + ':' + $('#port').val() + '/api/Persistence?table=flows&key=' + key, function (data) {
         
 		if (data) {
 			var json = data.Value;
@@ -225,7 +225,7 @@ function save() {
 	
     var json = toJson();
 
-    $.ajax('http://localhost:' + $('#port').val() + '/api/Persistence?table=flows&key=' + key,
+    $.ajax('http://' + window.location.hostname + ':' + $('#port').val() + '/api/Persistence?table=flows&key=' + key,
     {
         data: json,
         contentType: 'application/json',

@@ -66,7 +66,7 @@
 <div ng-cloak="">
     <md-content>
         <md-list flex>
-            <md-subheader class="md-no-sticky">Results</md-subheader>
+            <md-subheader class="md-no-sticky" ng-show="results.length > 0">Results</md-subheader>
             <md-list-item class="md-3-line" ng-repeat="item in results" ng-click="null">
                 <md-icon class="material-icons">{{ item.Image }}</md-icon>
                 <div class="md-list-item-text" layout="column">
@@ -90,7 +90,7 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/signalr.js/2.2.2/jquery.signalR.min.js"></script>
-<script src="http://localhost:8080/signalr/hubs"></script>
+<script src="signalr/hubs"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-signalr-hub/1.6.2/signalr-hub.min.js"></script>
 
 <script src="../Scripts/index.js"></script>

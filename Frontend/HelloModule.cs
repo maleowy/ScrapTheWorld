@@ -8,12 +8,19 @@ namespace Frontend
         {
             Get["/"] = o => View["index"];
 
-            Get["/flow"] = o => View["flow"];
+            Get["/flow"] = o =>
+            {
+                dynamic viewBag = new DynamicDictionary();
+                viewBag.PersistencePort = Program.PersistencePort;
+
+                return View["flow", viewBag];
+            };
 
             Get["/scripts"] = o =>
             {
                 dynamic viewBag = new DynamicDictionary();
-                viewBag.Url = "http://localhost:8081/api/Persistence?table=scripts";
+                viewBag.PersistencePort = Program.PersistencePort;
+                viewBag.Table = "scripts";
 
                 return View["scripts", viewBag];
             };

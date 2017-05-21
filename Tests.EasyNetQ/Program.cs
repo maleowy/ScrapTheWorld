@@ -6,6 +6,7 @@ using EasyNetQ;
 using EasyNetQ.SystemMessages;
 using EasyNetQ.Topology;
 using Models;
+using static Helpers.Helpers;
 
 namespace Tests.EasyNetQ
 {
@@ -17,7 +18,7 @@ namespace Tests.EasyNetQ
 
         static void Main(string[] args)
         {
-            Bus = RabbitHutch.CreateBus("host=localhost;timeout=5;prefetchcount=1");
+            Bus = RabbitHutch.CreateBus(GetBusConfiguration(FindRabbit(), "guest", "guest", 1, 5));
 
             RpcCall(sleepToLong: false);
 

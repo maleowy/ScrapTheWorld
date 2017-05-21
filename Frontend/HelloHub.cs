@@ -61,7 +61,7 @@ namespace Frontend
 
             node.Data = args.ToExpando();
 
-            var client = new RestClient("http://localhost:8081");
+            var client = new RestClient($"http://{Program.PersistenceIP}:{Program.PersistencePort}");
             var req = new RestRequest("/api/Persistence?table=scripts");
 
             node.Scripts = new Dictionary<string, string>();
