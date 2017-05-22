@@ -36,7 +36,7 @@
             </md-button>
         </md-menu-item>
         <md-menu-item>
-            <md-switch ng-model="data.notify" aria-label="Notify" class="md-warn switch">
+            <md-switch ng-model="data.notify" aria-label="Notify" class="md-primary switch">
                 Notify
             </md-switch>
         </md-menu-item>
@@ -77,6 +77,11 @@
         </md-list>
     </md-content>
 </div>
+
+<md-button id="backToTop" class="md-raised md-primary md-fab" aria-label="Back to Top">
+    <md-tooltip md-direction="top">Back to Top</md-tooltip>
+    <md-icon class="material-icons">keyboard_arrow_up</md-icon>
+</md-button>
 
 <!-- Angular Material requires Angular.js Libraries -->
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>

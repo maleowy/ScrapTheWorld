@@ -24,3 +24,13 @@ md-menu-content {
 .search {
     max-width: 70%;
 }
+
+#backToTop {
+    position: fixed;      
+    bottom: 0;
+    right: 0;
+    z-index: 100000;
+    cursor: pointer;
+    margin: 10px;
+    
+}

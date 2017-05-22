@@ -74,6 +74,20 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
             notifyMe();
         }
     });
+
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 100) {
+            $('#backToTop').fadeIn();
+        } else {
+            $('#backToTop').fadeOut();
+        }
+    });
+    $('#backToTop').click(function() {
+        $("html, body").animate({ scrollTop: 0 }, 1000);
+        return false;
+    });
+    $('#backToTop').fadeOut();
+
 }]);
 
 
