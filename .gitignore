@@ -256,3 +256,12 @@ paket-files/
 /Frontend/Scripts/jquery.flowchart_tweaked.js
 /Frontend/views/flow.html
 /Frontend/views/scripts.html
+/GoogleChromePortable/App/*
+/GoogleChromePortable/Data/*
+/GoogleChromePortable/Other/*
+/GoogleChromePortable/GoogleChromePortable.exe
+/GoogleChromePortable/help.html
+/RabbitMQ/db/*
+/RabbitMQ/erl8.2/*
+/RabbitMQ/log/*
+/RabbitMQ/rabbitmq_server-3.6.6/*
