@@ -1,4 +1,6 @@
 ﻿using Nancy;
+using Nancy.Extensions;
+using static Logic.Logic;
 
 namespace Frontend
 {
@@ -14,6 +16,14 @@ namespace Frontend
                 viewBag.PersistencePort = Program.PersistencePort;
 
                 return View["flow", viewBag];
+            };
+
+            Post["/validate"] = o =>
+            {
+                var json = Context.Request.Body.AsString();
+                GetNodes(json);
+
+                return HttpStatusCode.OK;
             };
 
             Get["/scripts"] = o =>

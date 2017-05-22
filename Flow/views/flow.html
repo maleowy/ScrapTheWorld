@@ -36,31 +36,41 @@
 	<ul id='menu' class='dropdown-content'>
 		<li><a href="#" onclick="openLoadFlowModal()">load</a></li>
 		<li><a href="#" onclick="fromJson($('#json').val())">from json</a></li>
-		<li><a href="#" onclick="toJson()">to json</a></li>
+	    <li><a href="#" onclick="toJson()">to json</a></li>
+        <li><a href="#" onclick="validate()">validate</a></li>
 		<li><a href="#" onclick="openSaveFlowModal()">save</a></li>
 		<li><a href="#" onclick="add()"><span class="new badge blue" data-badge-caption="">+</span>add</a></li>
-		<li><a href="#" onclick="deleteSelected()"><span class="new badge blue" data-badge-caption="">del</span>delete</a></li>
+	    <li><a href="#" onclick="deleteSelected()"><span class="new badge blue" data-badge-caption="">del</span>delete</a></li>
+        <li><a href="#" onclick="clean()">clean</a></li>
 	</ul>
-  
-	<div id="flowModal" class="modal">
-		<div class="modal-content">
 
-			<div class="row">
-				<div class="input-field col s12">
-					<input id="flowName" type="text"></input>
-					<label for="flowName">Flow name</label>
-				</div>
-			</div>
-			
-			<a id="load" href="#" class="modal-action modal-close waves-effect waves-blue btn blue" onclick="load()">Load</a>
-			<a id="save" href="#" class="modal-action modal-close waves-effect waves-blue btn blue" onclick="save()">Save</a>
-		  
-		</div>
-	</div>
+     <div id="flowModal" class="modal">
+         <div class="modal-content">
+
+             <div class="row">
+                 <div class="input-field col s12">
+                     <input id="flowName" type="text"></input>
+                     <label for="flowName">Flow name</label>
+                 </div>
+             </div>
+
+             <a id="load" href="#" class="modal-action modal-close waves-effect waves-blue btn blue" onclick="load()">Load</a>
+             <a id="save" href="#" class="modal-action modal-close waves-effect waves-blue btn blue" onclick="save()">Save</a>
+
+         </div>
+     </div>
+
+     <div id="errorModal" class="modal">
+         <div class="modal-content">
+             <div class="row">
+                 <div id="error" class="input-field col s12"></div>
+             </div>
+         </div>
+     </div>
 
      <input id="port" type="hidden" value="@Model.PersistencePort"/>
 
-     <div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="open Url &quot;http://www.duckduckgo.com&quot;">Open</div>
+    <div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="open Url &quot;http://www.duckduckgo.com&quot;">Open</div>
 	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="fill QuerySelector &quot;#search_form_input_homepage&quot; Value &quot;Test&quot;">Fill</div>
 	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="click QuerySelector &quot;#search_button_homepage&quot;">Click</div>
 	<div class="draggable_operator ui-draggable ui-draggable-handle btn orange" data-inputs="1" data-outputs="1" data-commands="wait 1000">Wait</div>

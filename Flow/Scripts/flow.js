@@ -192,6 +192,12 @@ function openSaveFlowModal() {
 	$('#flowModal').openModal();
 }
 
+function showError(jqXHR, exception) {
+    var error = jqXHR.responseJSON ? jqXHR.responseJSON.details : exception;
+    $('#error').text(error);
+    $('#errorModal').openModal();
+}
+
 function load() {
 
 	var key = $('#flowName').val();
@@ -210,8 +216,7 @@ function load() {
 		}
     })
 	.fail(function (jqXHR, exception) {
-        $('#json').val(jqXHR.responseJSON ? jqXHR.responseJSON.details : exception);
-		$('#json').trigger('autoresize');
+        showError(jqXHR, exception);
     });
 }
 
@@ -225,18 +230,55 @@ function save() {
 	
     var json = toJson();
 
-    $.ajax('http://' + window.location.hostname + ':' + $('#port').val() + '/api/Persistence?table=flows&key=' + key,
+    $.ajax('/validate',
     {
         data: json,
         contentType: 'application/json',
         type: 'POST'
     })
+    .done(function() {
+        $.ajax('http://' + window.location.hostname + ':' + $('#port').val() + '/api/Persistence?table=flows&key=' + key,
+        {
+            data: json,
+            contentType: 'application/json',
+            type: 'POST'
+        })
+        .done(function() {
+            Materialize.toast('Saved!', 3000, 'blue');
+        })
+        .fail(function (jqXHR, exception) {
+            showError(jqXHR, exception);
+        });
+    })
 	.fail(function (jqXHR, exception) {
-        $('#json').val(jqXHR.responseJSON ? jqXHR.responseJSON.details : exception);
-		$('#json').trigger('autoresize');
+	    showError(jqXHR, exception);
     });
 }
 
+function validate() {
+
+    var json = toJson();
+
+    $.ajax('/validate',
+    {
+        data: json,
+        contentType: 'application/json',
+        type: 'POST'
+    })
+    .done(function () {
+        Materialize.toast('OK!', 3000, 'blue');
+    })
+	.fail(function (jqXHR, exception) {
+	    showError(jqXHR, exception);
+	});
+}
+
+function clean() {
+    var json = null;
+    $('#json').val(json);
+    $('#json').trigger('autoresize');
+    fromJson(json);
+}
 
 $(function() {
     

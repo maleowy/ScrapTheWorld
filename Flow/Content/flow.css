@@ -8,6 +8,7 @@
 
 #menu {
 	width: 150px !important;
+    z-index: 100000;
 }
 
 #menu > li > a {

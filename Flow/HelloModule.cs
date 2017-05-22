@@ -1,4 +1,6 @@
 ﻿using Nancy;
+using Nancy.Extensions;
+using static Logic.Logic;
 
 namespace Flow
 {
@@ -12,6 +14,14 @@ namespace Flow
                 viewBag.PersistencePort = Program.PersistencePort;
 
                 return View["flow", viewBag];
+            };
+
+            Post["/validate"] = o =>
+            {
+                var json = Context.Request.Body.AsString();
+                GetNodes(json);
+
+                return HttpStatusCode.OK;
             };
         }
     }
