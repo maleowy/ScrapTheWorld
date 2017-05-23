@@ -39,7 +39,7 @@ namespace Frontend
             Console.Title = "Frontend";
             Console.WriteLine("Waiting for RabbitMQ...");
 
-            MapPorts().Wait();
+            MapPorts();
 
             PreparePaths();
             AddChromePortable();
@@ -69,7 +69,12 @@ namespace Frontend
 
             Console.Clear();
             Console.WriteLine($"Local - http://{IP}:{Port}");
-            Console.WriteLine($"Public - http://{ExternalIP}:{ExternalPort}");
+
+            if (ExternalIP != null)
+            {
+                Console.WriteLine($"Public - http://{ExternalIP}:{ExternalPort}");
+            }
+
             Console.WriteLine();
             Console.WriteLine("o - offscreen, f - winforms, w - wpf, s - selenium, r - remote debugging, p - publish, 1 - flow, 2 - flow, esc - exit");
 
@@ -129,16 +134,19 @@ namespace Frontend
             }
         }
 
-        private static async Task MapPorts()
+        private static void MapPorts()
         {
-            var discoverer = new NatDiscoverer();
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            IgnoreExceptions(async () =>
+            {
+                var discoverer = new NatDiscoverer();
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
-            var device = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
-            ExternalIP = device.GetExternalIPAsync().Result.ToString();
+                var device = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+                ExternalIP = device.GetExternalIPAsync().Result.ToString();
 
-            await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, Port, ExternalPort, "Scrap The World"));
-            await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, PersistencePort, PersistencePort, "Persistence"));
+                await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, Port, ExternalPort, "Scrap The World"));
+                await device.CreatePortMapAsync(new Mapping(Protocol.Tcp, PersistencePort, PersistencePort, "Persistence"));
+            });
         }
 
         private static void PreparePaths()

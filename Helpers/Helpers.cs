@@ -3,6 +3,7 @@ using System.DirectoryServices;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace Helpers
 {
@@ -108,6 +109,15 @@ namespace Helpers
             try
             {
                 action.Invoke();
+            }
+            catch { }
+        }
+
+        public static void IgnoreExceptions(Func<Task> action)
+        {
+            try
+            {
+                action.Invoke().Wait();
             }
             catch { }
         }
