@@ -47,10 +47,11 @@ namespace Logic
             {
                 NextWorker = !nextWorker.IsEmpty,
                 WaitTime = waitTime.GetOrDefault(),
+                AskQuestion = (script.GetOrDefault() ?? "") == "question",
                 Open = (script.GetOrDefault() ?? "") == "open",
-                Script = (script.GetOrDefault() ?? "") == "open" ? null : script.GetOrDefault(),
+                Script = new[] { "question", "open" }.Contains(script.GetOrDefault()) ? null : script.GetOrDefault(),
                 Data = data,
-                ReturnResults = !returnResults.IsEmpty             
+                ReturnResults = !returnResults.IsEmpty           
             } : null;
 
         public static List<Node> ParseString(string name, string commands)

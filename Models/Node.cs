@@ -23,6 +23,8 @@ namespace Models
         public List<Node> Nodes { get; set; }
         public Dictionary<string, string> Scripts { get; set; }
 
+        public bool AskQuestion { get; set; }
+
         public Node()
         {
             Data = new ExpandoObject();

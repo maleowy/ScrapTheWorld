@@ -32,7 +32,7 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
 		.primaryPalette('blue');
 
     })
-    .controller('AppCtrl', ['$scope', '$http', '$window', '$mdDialog', 'HelloHubFactory', function ($scope, $http, $window, $mdDialog, HelloHubFactory) {
+    .controller('AppCtrl', ['$scope', '$rootScope', '$http', '$window', '$mdDialog', 'HelloHubFactory', function ($scope, $rootScope, $http, $window, $mdDialog, HelloHubFactory) {
 
     var originatorEv;
 
@@ -62,6 +62,10 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
 
     $scope.clear = function () {
         $scope.results = [];
+    }
+
+    $rootScope.answer = function(guid, answer) {
+        HelloHubFactory.answer(guid, answer);
     }
 
     $scope.getConnectionId = function() {
@@ -104,7 +108,7 @@ app.directive('myEnter', function () {
             });
         };
     })
-    .factory('HelloHubFactory', ['$rootScope', 'Hub', function ($rootScope, Hub) {
+    .factory('HelloHubFactory', ['$rootScope', '$mdDialog', 'Hub', function ($rootScope, $mdDialog, Hub) {
 
     //declaring the hub connection
     var hub = new Hub('helloHub', {
@@ -114,11 +118,28 @@ app.directive('myEnter', function () {
             'addResult': function (data, image) {
                 $rootScope.$broadcast('topic', { Data: data, Image: image, Time: new Date().toLocaleString() });
                 $rootScope.$apply();
+            },
+            'question': function (guid, question) {
+
+                var confirm = $mdDialog.prompt()
+                  .title("Question")
+                  .textContent(question)
+                  .placeholder('Answer')
+                  .ariaLabel('Answer')
+                  .initialValue("")
+                  .ok("OK")
+                  .cancel('Cancel');
+
+                $mdDialog.show(confirm).then(function (result) {
+                    $rootScope.answer(guid, result);
+                }, function (result) {
+
+                });
             }
         },
 
         //server side methods
-        methods: ['search'],
+        methods: ['search', 'answer'],
 
         //query params sent on initial connection
         queryParams: {
@@ -155,9 +176,14 @@ app.directive('myEnter', function () {
         return hub.connection.id;
     }
 
+    var answer = function (guid, message) {
+        hub.answer(guid, message);
+    };
+
     return {
         search: search,
-        getConnectionId: getConnectionId
+        getConnectionId: getConnectionId,
+        answer: answer
     };
 }]);
 

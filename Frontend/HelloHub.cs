@@ -51,6 +51,8 @@ namespace Frontend
             node.Name = tmp[1];
 
             var args = new Dictionary<string, object> {
+                { "Frontend", $"{Program.IP}:{Program.Port}" },
+                { "Question", "?" },
                 { "Guid", connectionId }
             };
 
@@ -81,6 +83,16 @@ namespace Frontend
             node.Scripts = node.Scripts.Where(kvp => flowScripts.Contains(kvp.Key)).ToDictionary(i => i.Key, i => i.Value);
 
             return node;
+        }
+
+        public static void Question(string guid, string data)
+        {
+            _hubContext.Clients.All.question(guid, data);
+        }
+
+        public void Answer(string guid, string answer)
+        {
+            MethodHandler.GetValueResult(Guid.Parse(guid), answer);
         }
 
         public static void ReturnResults(string connectionId, string data, string image)

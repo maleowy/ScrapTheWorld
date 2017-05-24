@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Models;
 using Newtonsoft.Json;
+using RestSharp;
 
 namespace Logic
 {
@@ -104,6 +105,14 @@ namespace Logic
                 if (node.WaitTime > 0)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(node.WaitTime));
+                }
+
+                if (node.AskQuestion)
+                {
+                    var client = new RestClient("http://" + node.Data.Frontend);
+                    var req = new RestRequest("/questionAnswer?q=" + node.Data.Question) { Timeout = int.MaxValue };
+                    var response = client.Execute(req);
+                    node.Data.Answer = response.Content;
                 }
 
                 if (!string.IsNullOrEmpty(node.Script))

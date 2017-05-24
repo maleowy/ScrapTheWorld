@@ -16,6 +16,11 @@
 	color: #2196F3;
 }
 
+.dropdown-button {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
 /* flowchart */
 
 #chart {
@@ -39,6 +44,8 @@
 
 .draggable_operator {
 	cursor: move;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .flowchart-operator-connector-arrow,

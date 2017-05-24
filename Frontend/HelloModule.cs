@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using System;
+using Nancy;
 using Nancy.Extensions;
 using static Logic.Logic;
 
@@ -33,6 +34,14 @@ namespace Frontend
                 viewBag.Table = "scripts";
 
                 return View["scripts", viewBag];
+            };
+
+            Get["/questionAnswer"] = o =>
+            {
+                var question = this.Request.Query["q"];
+                var guid = Guid.NewGuid();
+                string answer = MethodHandler.GetValue<string>(guid, () => HelloHub.Question(guid.ToString(), question));
+                return answer;
             };
 
             Get["/test"] = o =>
