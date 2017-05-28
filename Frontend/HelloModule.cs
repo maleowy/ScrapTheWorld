@@ -1,6 +1,7 @@
 ﻿using System;
 using Nancy;
 using Nancy.Extensions;
+using Nancy.Helpers;
 using static Logic.Logic;
 
 namespace Frontend
@@ -38,7 +39,7 @@ namespace Frontend
 
             Get["/questionAnswer"] = o =>
             {
-                var question = this.Request.Query["q"];
+                var question = HttpUtility.UrlDecode(Request.Query["q"]);
                 var guid = Guid.NewGuid();
                 string answer = MethodHandler.GetValue<string>(guid, () => HelloHub.Question(guid.ToString(), question));
                 return answer;
@@ -46,7 +47,7 @@ namespace Frontend
 
             Get["/test"] = o =>
             {
-                HelloHub.ReturnResults(null, "test", "info_outline");
+                HelloHub.ReturnResults(null, "[\"test\"]", "info_outline");
                 return HttpStatusCode.OK;
             };
         }

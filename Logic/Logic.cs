@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Models;
 using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Extensions.MonoHttp;
 
 namespace Logic
 {
@@ -99,6 +100,11 @@ namespace Logic
             
                 if (node.Open)
                 {
+                    if (!IsValidUrl(node.Data.Url))
+                    {
+                        throw new ArgumentException("Url not valid", node.Data.Url);
+                    }
+
                     await onNavigate.Invoke(node.Data.Url);
                 }
 
@@ -110,7 +116,7 @@ namespace Logic
                 if (node.AskQuestion)
                 {
                     var client = new RestClient("http://" + node.Data.Frontend);
-                    var req = new RestRequest("/questionAnswer?q=" + node.Data.Question) { Timeout = int.MaxValue };
+                    var req = new RestRequest("/questionAnswer?q=" + HttpUtility.UrlEncode(node.Data.Question)) { Timeout = int.MaxValue };
                     var response = client.Execute(req);
                     node.Data.Answer = response.Content;
                 }
@@ -188,6 +194,14 @@ namespace Logic
             {
                 await Process(newNode, onStart, onNavigate, onEvaluate, onNext, onResult, onError, onEnd);
             }
+        }
+
+        private static bool IsValidUrl(string uriName)
+        {
+            Uri uriResult;
+
+            return Uri.TryCreate(uriName, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
     }
 }

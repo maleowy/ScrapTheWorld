@@ -21,6 +21,19 @@ md-menu-content {
     text-decoration: none;
 }
 
+md-list-item:hover {
+    background-color: rgba(158,158,158,0.2);
+}
+
+.md-list-item-text > p {
+    color: black !important;
+}
+
+.md-list-item-text > p > a {
+    color: grey;
+    text-decoration: none;
+}
+
 .search {
     max-width: 70%;
 }
@@ -32,5 +45,4 @@ md-menu-content {
     z-index: 100000;
     cursor: pointer;
     margin: 10px;
-    
 }

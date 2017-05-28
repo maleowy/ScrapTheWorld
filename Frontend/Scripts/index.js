@@ -25,7 +25,7 @@ function notifyMe() {
 }
 
 
-var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
+var app = angular.module('MyApp', ['ngSanitize', 'ngMaterial', 'SignalR'])
     .config(function ($mdThemingProvider) {
 
         $mdThemingProvider.theme('default')
@@ -73,6 +73,7 @@ var app = angular.module('MyApp', ['ngMaterial', 'SignalR'])
     }
 
     $scope.$on('topic', function (event, arg) {
+        arg.Data = JSON.parse(arg.Data);
         $scope.results.unshift(arg);
         if ($scope.data.notify) {
             notifyMe();
@@ -123,7 +124,7 @@ app.directive('myEnter', function () {
 
                 var confirm = $mdDialog.prompt()
                   .title("Question")
-                  .textContent(question)
+                  .htmlContent(question)
                   .placeholder('Answer')
                   .ariaLabel('Answer')
                   .initialValue("")

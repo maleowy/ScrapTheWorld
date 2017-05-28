@@ -52,7 +52,6 @@ namespace Frontend
 
             var args = new Dictionary<string, object> {
                 { "Frontend", $"{Program.IP}:{Program.Port}" },
-                { "Question", "?" },
                 { "Guid", connectionId }
             };
 

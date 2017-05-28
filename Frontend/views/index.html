@@ -67,10 +67,10 @@
     <md-content>
         <md-list flex>
             <md-subheader class="md-no-sticky" ng-show="results.length > 0">Results</md-subheader>
-            <md-list-item class="md-3-line" ng-repeat="item in results" ng-click="null">
+            <md-list-item class="md-2-line" ng-repeat="item in results">
                 <md-icon class="material-icons">{{ item.Image }}</md-icon>
                 <div class="md-list-item-text" layout="column">
-                    <h3>{{ item.Data }}</h3>
+                    <p ng-repeat="line in item.Data track by $index" ng-bind-html="line"></p>
                     <h4>{{ item.Time }}</h4>
                 </div>
             </md-list-item>
@@ -88,6 +88,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
 
 <!-- Angular Material Library -->
 <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
